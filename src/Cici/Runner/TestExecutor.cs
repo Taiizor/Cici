@@ -28,6 +28,7 @@ public class TestExecutor : ITestExecutor
         {
             // Build the dotnet test command
             var arguments = BuildTestArguments(test);
+            var workingDir = FindProjectDirectory(test.AssemblyPath);
             
             var processStartInfo = new ProcessStartInfo
             {
@@ -37,7 +38,7 @@ public class TestExecutor : ITestExecutor
                 RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                WorkingDirectory = Path.GetDirectoryName(test.AssemblyPath)
+                WorkingDirectory = workingDir
             };
 
             using var process = new Process { StartInfo = processStartInfo };
@@ -149,10 +150,17 @@ public class TestExecutor : ITestExecutor
 
     private string BuildTestArguments(TestInfo test)
     {
-        var assemblyName = Path.GetFileNameWithoutExtension(test.AssemblyPath);
         var filter = BuildTestFilter(test);
+        var projectFile = FindProjectFile(test.AssemblyPath);
         
-        return $"test \"{assemblyName}.csproj\" --no-build --filter \"{filter}\" --logger \"console;verbosity=normal\"";
+        if (!string.IsNullOrEmpty(projectFile))
+        {
+            // Use project file if found
+            return $"test \"{projectFile}\" --filter \"{filter}\" --logger \"console;verbosity=quiet\" --no-build";
+        }
+        
+        // Fallback to vstest
+        return $"vstest \"{test.AssemblyPath}\" --TestCaseFilter:\"{filter}\" --logger:console";
     }
 
     private string BuildTestFilter(TestInfo test)
@@ -223,5 +231,51 @@ public class TestExecutor : ITestExecutor
         }
 
         return stackTraceLines.Count > 0 ? string.Join("\n", stackTraceLines) : null;
+    }
+    
+    private string FindProjectDirectory(string assemblyPath)
+    {
+        var dir = Path.GetDirectoryName(assemblyPath);
+        
+        // Walk up the directory tree to find the project file
+        while (!string.IsNullOrEmpty(dir))
+        {
+            if (Directory.GetFiles(dir, "*.csproj").Any() ||
+                Directory.GetFiles(dir, "*.fsproj").Any() ||
+                Directory.GetFiles(dir, "*.vbproj").Any())
+            {
+                return dir;
+            }
+            
+            var parent = Directory.GetParent(dir);
+            if (parent == null) break;
+            dir = parent.FullName;
+        }
+        
+        // Fallback to assembly directory
+        return Path.GetDirectoryName(assemblyPath) ?? Directory.GetCurrentDirectory();
+    }
+    
+    private string? FindProjectFile(string assemblyPath)
+    {
+        var dir = FindProjectDirectory(assemblyPath);
+        
+        // Look for project file in the directory
+        var projectFiles = Directory.GetFiles(dir, "*.csproj")
+            .Concat(Directory.GetFiles(dir, "*.fsproj"))
+            .Concat(Directory.GetFiles(dir, "*.vbproj"))
+            .ToArray();
+        
+        if (projectFiles.Length == 1)
+        {
+            return Path.GetFileName(projectFiles[0]);
+        }
+        
+        // If multiple project files, try to match by assembly name
+        var assemblyName = Path.GetFileNameWithoutExtension(assemblyPath);
+        var matchingProject = projectFiles.FirstOrDefault(p =>
+            Path.GetFileNameWithoutExtension(p).Equals(assemblyName, StringComparison.OrdinalIgnoreCase));
+        
+        return matchingProject != null ? Path.GetFileName(matchingProject) : null;
     }
 }
