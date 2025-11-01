@@ -71,10 +71,16 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
         
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build projects
+      run: dotnet build --configuration Release --no-restore
+        
     - name: Pack NuGet packages
       run: |
-        dotnet pack src/Cici/Cici.csproj --configuration Release --output ./artifacts
-        dotnet pack src/Cici.CLI/Cici.CLI.csproj --configuration Release --output ./artifacts
+        dotnet pack src/Cici/Cici.csproj --configuration Release --no-build --output ./artifacts
+        dotnet pack src/Cici.CLI/Cici.CLI.csproj --configuration Release --no-build --output ./artifacts
         
     - name: Upload NuGet packages
       uses: actions/upload-artifact@v4
