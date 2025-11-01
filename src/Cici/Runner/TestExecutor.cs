@@ -160,24 +160,24 @@ namespace Cici.Runner
             if (!string.IsNullOrEmpty(projectFile))
             {
                 // Use project file if found
-                var projectDir = Path.GetDirectoryName(projectFile) ?? Directory.GetCurrentDirectory();
-                var projectName = Path.GetFileName(projectFile);
+                string projectDir = Path.GetDirectoryName(projectFile) ?? Directory.GetCurrentDirectory();
+                string projectName = Path.GetFileName(projectFile);
 
                 // Use --configuration Release/Debug based on the assembly path
-                var config = test.AssemblyPath.Contains("\\Release\\") || test.AssemblyPath.Contains("/Release/")
+                string config = test.AssemblyPath.Contains("\\Release\\") || test.AssemblyPath.Contains("/Release/")
                     ? "Release" : "Debug";
 
                 // Use relative project file name since we set working directory
-                var arguments = $"test \"{projectName}\" --filter \"{filter}\" --logger \"console;verbosity=quiet\" --configuration {config} --no-build --no-restore";
+                string arguments = $"test \"{projectName}\" --filter \"{filter}\" --logger \"console;verbosity=quiet\" --configuration {config} --no-build --no-restore";
 
                 return (arguments, projectDir);
             }
 
             // If no project file found, try vstest as fallback
-            var assemblyDir = Path.GetDirectoryName(test.AssemblyPath) ?? Directory.GetCurrentDirectory();
+            string assemblyDir = Path.GetDirectoryName(test.AssemblyPath) ?? Directory.GetCurrentDirectory();
 
             // Last fallback: try vstest (note: this may not work in all scenarios)
-            var vstestArgs = $"vstest \"{test.AssemblyPath}\" /TestCaseFilter:\"{filter}\" /logger:console";
+            string vstestArgs = $"vstest \"{test.AssemblyPath}\" /TestCaseFilter:\"{filter}\" /logger:console";
             return (vstestArgs, assemblyDir);
         }
 
