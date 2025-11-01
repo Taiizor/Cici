@@ -8,10 +8,10 @@
         
         <!-- Package Information -->
         <PackageId>Cici</PackageId>
-        <Version>1.0.1</Version>
+        <Version>1.0.2</Version>
         <Authors>Taiizor</Authors>
         <Company>Taiizor</Company>
-        <Copyright>Copyright © 2024 Taiizor</Copyright>
+        <Copyright>Copyright © 2025 Taiizor</Copyright>
         <Product>Cici - Flaky Test Detector</Product>
         
         <!-- Package Metadata -->
@@ -66,11 +66,6 @@ v1.0.0:
         <PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="18.0.0" />
         <PackageReference Include="System.Text.Json" Version="9.0.10" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
-    </ItemGroup>
-    
-    <ItemGroup>
-        <None Include="..\..\README.md" Pack="true" PackagePath="\" />
-        <None Include="..\..\icon.png" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>
