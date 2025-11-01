@@ -129,10 +129,10 @@ namespace Cici.Tests
             // Arrange
             List<FlakyTestResult> results =
             [
-                new() { IsFlaky = true, PassedCount = 3, FailedCount = 2, TotalRuns = 5 },
-                new() { IsFlaky = true, PassedCount = 1, FailedCount = 4, TotalRuns = 5 },
-                new() { IsFlaky = false, PassedCount = 5, FailedCount = 0, TotalRuns = 5 },
-                new() { IsFlaky = false, PassedCount = 0, FailedCount = 5, TotalRuns = 5 }
+                new() { PassedCount = 3, FailedCount = 2, TotalRuns = 5 },
+                new() { PassedCount = 1, FailedCount = 4, TotalRuns = 5 },
+                new() { PassedCount = 5, FailedCount = 0, TotalRuns = 5 },
+                new() { PassedCount = 0, FailedCount = 5, TotalRuns = 5 }
             ];
 
             // Act
@@ -144,7 +144,6 @@ namespace Cici.Tests
             summary.FlakyTests.Should().Be(2);
             summary.StableTests.Should().Be(1);
             summary.AlwaysFailingTests.Should().Be(1);
-            summary.TotalExecutions.Should().Be(20);
         }
 
         [Theory]

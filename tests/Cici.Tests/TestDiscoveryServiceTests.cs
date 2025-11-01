@@ -25,7 +25,7 @@ namespace Cici.Tests
             IEnumerable<TestInfo> tests = await _service.DiscoverTestsAsync(currentAssembly);
 
             // Assert
-            var testList = tests.ToList();
+            List<TestInfo> testList = tests.ToList();
             testList.Should().NotBeEmpty();
             testList.Should().Contain(t => t.ClassName.Contains("TestDiscoveryServiceTests"));
         }
@@ -41,7 +41,7 @@ namespace Cici.Tests
             IEnumerable<TestInfo> tests = await _service.DiscoverTestsAsync(currentAssembly, filter);
 
             // Assert
-            var testList = tests.ToList();
+            List<TestInfo> testList = tests.ToList();
             testList.Should().NotBeEmpty();
             testList.Should().AllSatisfy(t => t.FullName.Should().Contain(filter));
         }
@@ -68,7 +68,7 @@ namespace Cici.Tests
             IEnumerable<TestInfo> tests = await _service.DiscoverTestsAsync(currentAssembly);
 
             // Assert
-            var testList = tests.ToList();
+            List<TestInfo> testList = tests.ToList();
             testList.Should().NotBeEmpty();
             testList.Should().AllSatisfy(t => t.Framework.Should().Be(TestFramework.XUnit));
         }
@@ -83,7 +83,7 @@ namespace Cici.Tests
             IEnumerable<TestInfo> tests = await _service.DiscoverTestsAsync(currentAssembly);
 
             // Assert
-            var testList = tests.ToList();
+            List<TestInfo> testList = tests.ToList();
             testList.Should().NotBeEmpty();
 
             foreach (TestInfo? test in testList)
@@ -106,7 +106,7 @@ namespace Cici.Tests
         public void FilterMatches_ShouldWorkCorrectly(string? filter, string testName, bool expected)
         {
             // Arrange
-            var testInfo = new TestInfo { FullName = testName };
+            TestInfo testInfo = new() { FullName = testName };
 
             // Act
             bool matches = string.IsNullOrEmpty(filter) ||

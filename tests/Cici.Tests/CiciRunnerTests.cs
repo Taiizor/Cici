@@ -87,8 +87,8 @@ namespace Cici.Tests
 
             List<FlakyTestResult> flakyResults =
             [
-                new() { IsFlaky = false, PassedCount = 3, FailedCount = 0 },
-                new() { IsFlaky = true, PassedCount = 2, FailedCount = 1 }
+                new() { PassedCount = 3, FailedCount = 0, TotalRuns = 3 },
+                new() { PassedCount = 2, FailedCount = 1, TotalRuns = 3 }
             ];
 
             _mockAnalyzer
@@ -150,9 +150,10 @@ namespace Cici.Tests
                     ];
                 });
 
+            List<FlakyTestResult> flakyResults = [new() { PassedCount = 2, FailedCount = 0, TotalRuns = 2 }];
             _mockAnalyzer
                 .AnalyzeBatch(Arg.Any<Dictionary<TestInfo, List<TestExecutionResult>>>())
-                .Returns([new() { IsFlaky = false }]);
+                .Returns(flakyResults);
 
             _mockAnalyzer
                 .GenerateSummary(Arg.Any<List<FlakyTestResult>>())
@@ -176,7 +177,7 @@ namespace Cici.Tests
                 RepeatCount = 5
             };
 
-            var expectedError = "Test discovery failed";
+            string expectedError = "Test discovery failed";
             _mockDiscoveryService
                 .DiscoverTestsAsync(Arg.Any<string>(), Arg.Any<string?>())
                 .Returns<IEnumerable<TestInfo>>(x => throw new InvalidOperationException(expectedError));
@@ -210,7 +211,7 @@ namespace Cici.Tests
                 .ExecuteTestMultipleTimesAsync(Arg.Any<TestInfo>(), Arg.Any<int>(), Arg.Any<IProgress<int>?>())
                 .Returns(Task.FromResult(new List<TestExecutionResult> { new() { Passed = true } }));
 
-            List<FlakyTestResult> flakyResults = [new() { IsFlaky = false }];
+            List<FlakyTestResult> flakyResults = [new() { PassedCount = 1, FailedCount = 0, TotalRuns = 1 }];
             _mockAnalyzer
                 .AnalyzeBatch(Arg.Any<Dictionary<TestInfo, List<TestExecutionResult>>>())
                 .Returns(flakyResults);
