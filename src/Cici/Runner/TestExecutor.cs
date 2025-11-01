@@ -26,8 +26,7 @@ namespace Cici.Runner
             try
             {
                 // Build the dotnet test command
-                string arguments = BuildTestArguments(test);
-                string workingDir = FindProjectDirectory(test.AssemblyPath);
+                (string? arguments, string? workingDirectory) = BuildTestCommand(test);
 
                 ProcessStartInfo processStartInfo = new()
                 {
@@ -37,7 +36,7 @@ namespace Cici.Runner
                     RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
-                    WorkingDirectory = workingDir
+                    WorkingDirectory = workingDirectory
                 };
 
                 using Process process = new() { StartInfo = processStartInfo };
@@ -153,7 +152,7 @@ namespace Cici.Runner
             return results;
         }
 
-        private string BuildTestArguments(TestInfo test)
+        private (string arguments, string workingDirectory) BuildTestCommand(TestInfo test)
         {
             string filter = BuildTestFilter(test);
             string? projectFile = FindProjectFile(test.AssemblyPath);
@@ -161,11 +160,25 @@ namespace Cici.Runner
             if (!string.IsNullOrEmpty(projectFile))
             {
                 // Use project file if found
-                return $"test \"{projectFile}\" --filter \"{filter}\" --logger \"console;verbosity=quiet\" --no-build";
+                var projectDir = Path.GetDirectoryName(projectFile) ?? Directory.GetCurrentDirectory();
+                var projectName = Path.GetFileName(projectFile);
+
+                // Use --configuration Release/Debug based on the assembly path
+                var config = test.AssemblyPath.Contains("\\Release\\") || test.AssemblyPath.Contains("/Release/")
+                    ? "Release" : "Debug";
+
+                // Use relative project file name since we set working directory
+                var arguments = $"test \"{projectName}\" --filter \"{filter}\" --logger \"console;verbosity=quiet\" --configuration {config} --no-build --no-restore";
+
+                return (arguments, projectDir);
             }
 
-            // Fallback to vstest
-            return $"vstest \"{test.AssemblyPath}\" --TestCaseFilter:\"{filter}\" --logger:console";
+            // If no project file found, try vstest as fallback
+            var assemblyDir = Path.GetDirectoryName(test.AssemblyPath) ?? Directory.GetCurrentDirectory();
+
+            // Last fallback: try vstest (note: this may not work in all scenarios)
+            var vstestArgs = $"vstest \"{test.AssemblyPath}\" /TestCaseFilter:\"{filter}\" /logger:console";
+            return (vstestArgs, assemblyDir);
         }
 
         private string BuildTestFilter(TestInfo test)
@@ -279,7 +292,7 @@ namespace Cici.Runner
 
             if (projectFiles.Length == 1)
             {
-                return Path.GetFileName(projectFiles[0]);
+                return projectFiles[0]; // Return full path
             }
 
             // If multiple project files, try to match by assembly name
@@ -287,7 +300,7 @@ namespace Cici.Runner
             string? matchingProject = projectFiles.FirstOrDefault(p =>
                 Path.GetFileNameWithoutExtension(p).Equals(assemblyName, StringComparison.OrdinalIgnoreCase));
 
-            return matchingProject != null ? Path.GetFileName(matchingProject) : null;
+            return matchingProject; // Return full path
         }
     }
 }

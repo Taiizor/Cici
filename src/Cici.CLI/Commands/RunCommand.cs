@@ -197,6 +197,7 @@ namespace Cici.CLI.Commands
             // Run the analysis
             CiciRunResult result = await runner.RunAsync(runOptions);
 
+            // Update progress
             progressTask.Increment(50);
 
             return result;
