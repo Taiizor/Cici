@@ -24,13 +24,23 @@
 
 ### Installation
 
-#### As a .NET Global Tool
+#### As a .NET Global Tool (from NuGet)
 
 ```bash
 dotnet tool install --global Cici.CLI
 ```
 
-#### As a NuGet Package
+#### As a .NET Global Tool (from local build)
+
+```bash
+# Build and pack the tool
+dotnet pack src/Cici.CLI -c Release
+
+# Install from local package
+dotnet tool install --global --add-source ./src/Cici.CLI/bin/Release Cici.CLI
+```
+
+#### As a NuGet Package (for programmatic use)
 
 ```bash
 dotnet add package Cici

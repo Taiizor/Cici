@@ -11,7 +11,7 @@ void PrintHeader()
         .LeftJustified()
         .Color(Color.Cyan1));
     
-    AnsiConsole.MarkupLine("[dim]Flaky Test Detector v1.0.0[/]");
+    AnsiConsole.MarkupLine("[dim]Flaky Test Detector v1.0.1[/]");
     AnsiConsole.WriteLine();
 }
 
@@ -38,7 +38,7 @@ if (args.Length == 0 || args[0] == "--help" || args[0] == "-h")
 if (args[0] == "version")
 {
     PrintHeader();
-    AnsiConsole.MarkupLine("[cyan]Version:[/] 1.0.0");
+    AnsiConsole.MarkupLine("[cyan]Version:[/] 1.0.1");
     AnsiConsole.MarkupLine("[cyan]Runtime:[/] .NET 8.0");
     return 0;
 }
