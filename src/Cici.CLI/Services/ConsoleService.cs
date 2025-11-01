@@ -1,4 +1,5 @@
 using Spectre.Console;
+using System.Reflection;
 
 namespace Cici.CLI.Services
 {
@@ -30,7 +31,12 @@ namespace Cici.CLI.Services
                 .LeftJustified()
                 .Color(Color.Cyan1));
 
-            AnsiConsole.MarkupLine("[dim]Flaky Test Detector v1.0.1[/]");
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            string version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+                          ?? assembly.GetName().Version?.ToString()
+                          ?? "1.0.0";
+
+            AnsiConsole.MarkupLine($"[dim]Flaky Test Detector v{version}[/]");
             AnsiConsole.WriteLine();
         }
 
