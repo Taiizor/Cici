@@ -191,14 +191,18 @@ namespace Cici.CLI.Commands
                 OutputDirectory = options.OutputDirectory
             };
 
-            // Update progress
-            progressTask.Increment(50);
+            // Create progress reporter that updates the Spectre.Console progress bar
+            Progress<double> progress = new(percentage =>
+            {
+                // Update the progress task to the reported percentage
+                progressTask.Value = percentage;
+            });
 
-            // Run the analysis
-            CiciRunResult result = await runner.RunAsync(runOptions);
+            // Run the analysis with progress tracking
+            CiciRunResult result = await runner.RunAsync(runOptions, progress);
 
-            // Update progress
-            progressTask.Increment(50);
+            // Ensure progress is at 100%
+            progressTask.Value = 100;
 
             return result;
         }
