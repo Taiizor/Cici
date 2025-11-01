@@ -119,8 +119,13 @@ namespace Cici.Tests
 
             // Assert
             results.Should().HaveCount(2);
-            results[0].IsFlaky.Should().BeFalse();
-            results[1].IsFlaky.Should().BeTrue();
+
+            // Since dictionary ordering is not guaranteed, find results by test name
+            FlakyTestResult test1Result = results.First(r => r.Test.FullName == "Test1");
+            FlakyTestResult test2Result = results.First(r => r.Test.FullName == "Test2");
+
+            test1Result.IsFlaky.Should().BeFalse();
+            test2Result.IsFlaky.Should().BeTrue();
         }
 
         [Fact]

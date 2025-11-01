@@ -54,6 +54,7 @@ namespace Cici
                 if (!testList.Any())
                 {
                     Console.WriteLine("❌ No tests found matching the criteria.");
+                    runResult.Success = true; // No tests is a valid state, not an error
                     return runResult;
                 }
 

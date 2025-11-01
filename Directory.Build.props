@@ -1,12 +1,12 @@
 <Project>
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
-        <LangVersion>latest</LangVersion>
+        <LangVersion>preview</LangVersion>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
-        <AnalysisLevel>latest-recommended</AnalysisLevel>
+        <AnalysisLevel>preview</AnalysisLevel>
 
         <!-- Package metadata -->
         <Authors>Cici Team</Authors>
