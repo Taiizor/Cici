@@ -14,8 +14,8 @@
     <Product>Cici - Flaky Test Detector</Product>
     <Copyright>Copyright © 2024 Cici Team</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/yourusername/cici</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/yourusername/cici</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Taiizor/Cici</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Taiizor/Cici</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>testing;flaky;test;automation;ci;quality;xunit;nunit;mstest</PackageTags>
     <PackageIcon>icon.png</PackageIcon>

@@ -155,7 +155,7 @@ A test is considered **flaky** when it:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/cici.git
+git clone https://github.com/Taiizor/Cici.git
 cd cici
 
 # Build the solution
@@ -234,8 +234,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📬 Contact & Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/cici/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/cici/discussions)
+- **Issues**: [GitHub Issues](https://github.com/Taiizor/Cici/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Taiizor/Cici/discussions)
 - **Twitter**: [@cici_flaky](https://twitter.com/cici_flaky)
 
 ---
