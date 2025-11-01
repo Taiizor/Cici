@@ -48,7 +48,7 @@ namespace Cici
                 Dictionary<TestInfo, List<TestExecutionResult>> testResults = [];
                 int currentTest = 0;
                 int totalTests = testList.Count;
-                
+
                 // Calculate total operations for progress tracking
                 int totalOperations = testList.Count * options.RepeatCount;
                 int completedOperations = 0;
@@ -61,7 +61,7 @@ namespace Cici
                     Progress<int> progress = new(attempt =>
                     {
                         Console.Write($"\r  Attempt {attempt}/{options.RepeatCount}");
-                        
+
                         // Update overall progress
                         completedOperations++;
                         overallProgress?.Report((double)completedOperations / totalOperations * 100);
