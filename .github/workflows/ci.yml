@@ -48,7 +48,7 @@ jobs:
           
     - name: Upload Test Results
       if: matrix.configuration == 'Release' && matrix.os == 'ubuntu-latest'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: flaky-test-results
         path: ./test-results/
@@ -78,7 +78,7 @@ jobs:
         dotnet pack src/Cici.CLI/Cici.CLI.csproj --configuration Release --output ./artifacts
         
     - name: Upload NuGet packages
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: nuget-packages
         path: ./artifacts/*.nupkg
