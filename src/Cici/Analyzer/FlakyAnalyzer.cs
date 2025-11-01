@@ -3,10 +3,19 @@ using System.Text.RegularExpressions;
 
 namespace Cici.Analyzer
 {
+    /// <summary>
+    /// Provides flaky test detection and analysis capabilities by examining test execution patterns.
+    /// </summary>
     public class FlakyAnalyzer(FlakyAnalyzerOptions? options = null) : IFlakyAnalyzer
     {
         private readonly FlakyAnalyzerOptions _options = options ?? new FlakyAnalyzerOptions();
 
+        /// <summary>
+        /// Analyzes the execution results of a single test to determine if it's flaky.
+        /// </summary>
+        /// <param name="test">The test being analyzed.</param>
+        /// <param name="executionResults">Collection of execution results from multiple test runs.</param>
+        /// <returns>A comprehensive analysis result including pass rate, duration statistics, and flakiness determination.</returns>
         public FlakyTestResult AnalyzeTestResults(TestInfo test, List<TestExecutionResult> executionResults)
         {
             FlakyTestResult result = new()
@@ -29,6 +38,11 @@ namespace Cici.Analyzer
             return result;
         }
 
+        /// <summary>
+        /// Analyzes multiple tests in batch for improved performance.
+        /// </summary>
+        /// <param name="testResults">Dictionary mapping test information to their execution results.</param>
+        /// <returns>Collection of analyzed results for each test.</returns>
         public IEnumerable<FlakyTestResult> AnalyzeBatch(Dictionary<TestInfo, List<TestExecutionResult>> testResults)
         {
             List<FlakyTestResult> results = [];
@@ -43,6 +57,11 @@ namespace Cici.Analyzer
                           .ThenBy(r => r.PassRate);
         }
 
+        /// <summary>
+        /// Generates a comprehensive summary report from analyzed test results.
+        /// </summary>
+        /// <param name="results">Collection of analyzed test results.</param>
+        /// <returns>Summary containing statistics, patterns, and insights about test flakiness.</returns>
         public FlakyDetectionSummary GenerateSummary(IEnumerable<FlakyTestResult> results)
         {
             List<FlakyTestResult> resultsList = results.ToList();
@@ -72,6 +91,11 @@ namespace Cici.Analyzer
             return summary;
         }
 
+        /// <summary>
+        /// Analyzes error patterns from a collection of test results to identify common trends.
+        /// </summary>
+        /// <param name="results">Collection of test results to analyze.</param>
+        /// <returns>A dictionary mapping error patterns to their frequency.</returns>
         private Dictionary<string, int> AnalyzeErrorPatterns(List<FlakyTestResult> results)
         {
             Dictionary<string, int> errorPatterns = [];
@@ -94,7 +118,12 @@ namespace Cici.Analyzer
                                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
-        private string CategorizeError(string errorMessage)
+        /// <summary>
+        /// Categorizes error messages into common patterns for trend analysis.
+        /// </summary>
+        /// <param name="errorMessage">The error message to categorize.</param>
+        /// <returns>A category name representing the type of error.</returns>
+        private string CategorizeError(string? errorMessage)
         {
             // Common error patterns in flaky tests
             Dictionary<string, string> patterns = new()
@@ -112,14 +141,14 @@ namespace Cici.Analyzer
 
             foreach (KeyValuePair<string, string> pattern in patterns)
             {
-                if (Regex.IsMatch(errorMessage, pattern.Key, RegexOptions.IgnoreCase))
+                if (Regex.IsMatch(errorMessage ?? string.Empty, pattern.Key, RegexOptions.IgnoreCase))
                 {
                     return pattern.Value;
                 }
             }
 
             // If no pattern matches, try to extract the exception type
-            Match exceptionMatch = Regex.Match(errorMessage, @"(\w+Exception)");
+            Match exceptionMatch = Regex.Match(errorMessage ?? string.Empty, @"(\w+Exception)");
             if (exceptionMatch.Success)
             {
                 return exceptionMatch.Groups[1].Value;
@@ -129,10 +158,24 @@ namespace Cici.Analyzer
         }
     }
 
+    /// <summary>
+    /// Configuration options for the flaky test analyzer.
+    /// </summary>
     public class FlakyAnalyzerOptions
     {
+        /// <summary>
+        /// Gets or sets the maximum number of flaky tests to include in the summary report. Default is 10.
+        /// </summary>
         public int TopFlakyTestsToReport { get; set; } = 10;
+        
+        /// <summary>
+        /// Gets or sets whether to analyze and categorize error patterns. Default is true.
+        /// </summary>
         public bool AnalyzeErrorPatterns { get; set; } = true;
+        
+        /// <summary>
+        /// Gets or sets the threshold for considering a test flaky. Tests failing at least this percentage of the time are considered flaky. Default is 0.1 (10%).
+        /// </summary>
         public double FlakyThreshold { get; set; } = 0.1; // Consider test flaky if it fails at least 10% of the time
     }
 }

@@ -9,10 +9,11 @@
         <AnalysisLevel>preview</AnalysisLevel>
 
         <!-- Package metadata -->
-        <Authors>Cici Team</Authors>
-        <Company>Cici</Company>
+        <Version>1.0.5</Version>
+        <Authors>Taiizor</Authors>
+        <Company>Taiizor</Company>
         <Product>Cici - Flaky Test Detector</Product>
-        <Copyright>Copyright © 2025 Cici Team</Copyright>
+        <Copyright>Copyright © 2025 Taiizor</Copyright>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/Taiizor/Cici</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Taiizor/Cici</RepositoryUrl>

@@ -7,10 +7,6 @@
         
         <!-- Package Information -->
         <PackageId>Cici</PackageId>
-        <Version>1.0.3</Version>
-        <Authors>Taiizor</Authors>
-        <Company>Taiizor</Company>
-        <Copyright>Copyright © 2025 Taiizor</Copyright>
         <Product>Cici - Flaky Test Detector</Product>
         
         <!-- Package Metadata -->
