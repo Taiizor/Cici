@@ -40,7 +40,7 @@ public class FlakyTests
     }
     
     [Fact]
-    public void ConcurrencyIssueSimulation()
+    public async Task ConcurrencyIssueSimulation()
     {
         // Simulates a race condition
         var counter = 0;
@@ -48,14 +48,14 @@ public class FlakyTests
         
         for (int i = 0; i < 10; i++)
         {
-            tasks.Add(Task.Run(() =>
+            tasks.Add(Task.Run(async () =>
             {
-                Thread.Sleep(_random.Next(1, 5));
+                await Task.Delay(_random.Next(1, 5));
                 counter++; // Not thread-safe!
             }));
         }
         
-        Task.WaitAll(tasks.ToArray());
+        await Task.WhenAll(tasks);
         
         // Due to race conditions, this might occasionally fail
         Assert.Equal(10, counter);
