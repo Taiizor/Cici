@@ -189,7 +189,7 @@ dotnet run --project src/Cici.CLI -- run --assembly samples/SampleTests/bin/Debu
     cici run --assembly MyTests.dll --report json --output ./test-results
     
 - name: Upload Test Results
-  uses: actions/upload-artifact@v2
+  uses: actions/upload-artifact@v4
   with:
     name: flaky-test-report
     path: ./test-results/flaky-report.json
