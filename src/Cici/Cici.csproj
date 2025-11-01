@@ -43,6 +43,9 @@
         <Deterministic>true</Deterministic>
         <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
         
+        <!-- Code Analysis -->
+        <NoWarn>$(NoWarn);CS1591;CA1822;CA1860;CA1854;CA1805</NoWarn>
+        
         <!-- Release Notes -->
         <PackageReleaseNotes>
 v1.0.1:
