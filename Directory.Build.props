@@ -9,7 +9,7 @@
         <AnalysisLevel>preview</AnalysisLevel>
 
         <!-- Package metadata -->
-        <Version>1.0.5</Version>
+        <Version>1.0.6</Version>
         <Authors>Taiizor</Authors>
         <Company>Taiizor</Company>
         <Product>Cici - Flaky Test Detector</Product>

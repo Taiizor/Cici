@@ -3,6 +3,9 @@ using System.Reflection;
 
 namespace Cici.Runner
 {
+    /// <summary>
+    /// Service for discovering tests in .NET assemblies across multiple test frameworks.
+    /// </summary>
     public class TestDiscoveryService : ITestDiscoveryService
     {
         private readonly Dictionary<string, TestFramework> _frameworkAttributes = new()
@@ -14,11 +17,22 @@ namespace Cici.Runner
             { "Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute", TestFramework.MSTest }
         };
 
+        /// <summary>
+        /// Discovers all tests in the specified assembly.
+        /// </summary>
+        /// <param name="assemblyPath">The path to the test assembly.</param>
+        /// <returns>A task containing the collection of discovered tests.</returns>
         public async Task<IEnumerable<TestInfo>> DiscoverTestsAsync(string assemblyPath)
         {
             return await DiscoverTestsAsync(assemblyPath, null);
         }
 
+        /// <summary>
+        /// Discovers tests in the specified assembly with optional filtering.
+        /// </summary>
+        /// <param name="assemblyPath">The path to the test assembly.</param>
+        /// <param name="filter">Optional filter to apply to test discovery.</param>
+        /// <returns>A task containing the collection of discovered tests matching the filter.</returns>
         public async Task<IEnumerable<TestInfo>> DiscoverTestsAsync(string assemblyPath, string? filter)
         {
             return await Task.Run(() =>
@@ -96,6 +110,11 @@ namespace Cici.Runner
             });
         }
 
+        /// <summary>
+        /// Detects the test framework used by examining method attributes.
+        /// </summary>
+        /// <param name="method">The test method to examine.</param>
+        /// <returns>The detected test framework.</returns>
         private TestFramework GetTestFramework(MethodInfo method)
         {
             object[] attributes = method.GetCustomAttributes(false);
@@ -120,7 +139,12 @@ namespace Cici.Runner
             return TestFramework.Unknown;
         }
 
-        private bool IsAsyncMethod(MethodInfo method)
+        /// <summary>
+        /// Determines whether a method is asynchronous.
+        /// </summary>
+        /// <param name="method">The method to check.</param>
+        /// <returns>True if the method is asynchronous; otherwise, false.</returns>
+        private static bool IsAsyncMethod(MethodInfo method)
         {
             return method.ReturnType == typeof(Task) ||
                    (method.ReturnType.IsGenericType &&

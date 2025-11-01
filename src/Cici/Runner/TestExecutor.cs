@@ -4,10 +4,19 @@ using System.Text;
 
 namespace Cici.Runner
 {
+    /// <summary>
+    /// Executes tests using the dotnet test command and captures results.
+    /// </summary>
     public class TestExecutor(TestExecutorOptions? options = null) : ITestExecutor
     {
         private readonly TestExecutorOptions _options = options ?? new TestExecutorOptions();
 
+        /// <summary>
+        /// Executes a single test and captures the result.
+        /// </summary>
+        /// <param name="test">The test to execute.</param>
+        /// <param name="attemptNumber">The current attempt number.</param>
+        /// <returns>The execution result containing pass/fail status, duration, and error details.</returns>
         public async Task<TestExecutionResult> ExecuteTestAsync(TestInfo test, int attemptNumber)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
@@ -95,6 +104,13 @@ namespace Cici.Runner
             return result;
         }
 
+        /// <summary>
+        /// Executes a test multiple times for flakiness detection.
+        /// </summary>
+        /// <param name="test">The test to execute.</param>
+        /// <param name="repeatCount">The number of times to execute the test.</param>
+        /// <param name="progress">Optional progress reporter.</param>
+        /// <returns>List of all execution results.</returns>
         public async Task<List<TestExecutionResult>> ExecuteTestMultipleTimesAsync(
             TestInfo test,
             int repeatCount,
