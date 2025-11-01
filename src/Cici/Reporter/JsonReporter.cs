@@ -100,12 +100,39 @@ namespace Cici.Reporter
     /// </summary>
     public class JsonSummary
     {
+        /// <summary>
+        /// Gets or sets the total number of tests analyzed.
+        /// </summary>
         public int TotalTests { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the number of stable tests (consistently pass or consistently fail).
+        /// </summary>
         public int StableTests { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the number of flaky tests detected.
+        /// </summary>
         public int FlakyTests { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the number of tests that always fail.
+        /// </summary>
         public int AlwaysFailingTests { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the overall flaky rate as a percentage (0.0 to 1.0).
+        /// </summary>
         public double OverallFlakyRate { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the total time spent executing all tests.
+        /// </summary>
         public TimeSpan TotalExecutionTime { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the error patterns found across all tests with occurrence counts.
+        /// </summary>
         public Dictionary<string, int> ErrorPatterns { get; set; } = [];
     }
 
@@ -114,18 +141,69 @@ namespace Cici.Reporter
     /// </summary>
     public class JsonTestResult
     {
+        /// <summary>
+        /// Gets or sets the fully qualified name of the test.
+        /// </summary>
         public string TestName { get; set; } = string.Empty;
+        
+        /// <summary>
+        /// Gets or sets the class name containing the test.
+        /// </summary>
         public string ClassName { get; set; } = string.Empty;
+        
+        /// <summary>
+        /// Gets or sets the test method name.
+        /// </summary>
         public string MethodName { get; set; } = string.Empty;
+        
+        /// <summary>
+        /// Gets or sets the test framework name.
+        /// </summary>
         public string Framework { get; set; } = string.Empty;
+        
+        /// <summary>
+        /// Gets or sets the total number of test runs.
+        /// </summary>
         public int TotalRuns { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the number of passing runs.
+        /// </summary>
         public int PassedCount { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the number of failing runs.
+        /// </summary>
         public int FailedCount { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the pass rate as a percentage (0.0 to 1.0).
+        /// </summary>
         public double PassRate { get; set; }
+        
+        /// <summary>
+        /// Gets or sets whether the test is flaky.
+        /// </summary>
         public bool IsFlaky { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the average duration across all runs.
+        /// </summary>
         public TimeSpan AverageDuration { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the minimum duration across all runs.
+        /// </summary>
         public TimeSpan MinDuration { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the maximum duration across all runs.
+        /// </summary>
         public TimeSpan MaxDuration { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the detailed execution results for each run.
+        /// </summary>
         public List<JsonExecution> Executions { get; set; } = [];
     }
 
@@ -135,13 +213,39 @@ namespace Cici.Reporter
     /// <remarks>This class encapsulates information about an individual execution, such as whether it
     /// succeeded, when it occurred, how long it took, and any error information if the attempt failed. It is typically
     /// used to record or analyze the outcome of JSON-driven operations, such as tests or jobs.</remarks>
+    /// <summary>
+    /// Individual test execution data for the JSON report.
+    /// </summary>
     public class JsonExecution
     {
+        /// <summary>
+        /// Gets or sets the attempt number for this execution.
+        /// </summary>
         public int Attempt { get; set; }
+        
+        /// <summary>
+        /// Gets or sets whether the test passed in this execution.
+        /// </summary>
         public bool Passed { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the duration of the test execution.
+        /// </summary>
         public TimeSpan Duration { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the timestamp when the test was executed.
+        /// </summary>
         public DateTime ExecutedAt { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the error message if the test failed.
+        /// </summary>
         public string? ErrorMessage { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the stack trace if the test failed.
+        /// </summary>
         public string? StackTrace { get; set; }
     }
 }

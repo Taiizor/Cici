@@ -10,8 +10,16 @@ using System.Text;
 
 namespace Cici.CLI
 {
+    /// <summary>
+    /// Entry point for the Cici CLI application.
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// Main entry point for the CLI application.
+        /// </summary>
+        /// <param name="args">Command line arguments.</param>
+        /// <returns>Exit code: 0 for success, non-zero for failure.</returns>
         public static async Task<int> Main(string[] args)
         {
             Console.InputEncoding = Encoding.UTF8;
@@ -40,6 +48,11 @@ namespace Cici.CLI
             }
         }
 
+        /// <summary>
+        /// Creates and configures the host builder with dependency injection and configuration.
+        /// </summary>
+        /// <param name="args">Command line arguments.</param>
+        /// <returns>Configured host builder.</returns>
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
@@ -73,6 +86,10 @@ namespace Cici.CLI
                 });
         }
 
+        /// <summary>
+        /// Configures Serilog logging based on command line arguments and configuration.
+        /// </summary>
+        /// <param name="args">Command line arguments to check for verbose flag.</param>
         private static void ConfigureLogging(string[] args)
         {
             LogEventLevel logLevel = args.Contains("-v") || args.Contains("--verbose")

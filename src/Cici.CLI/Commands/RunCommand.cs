@@ -8,11 +8,26 @@ using Spectre.Console;
 
 namespace Cici.CLI.Commands
 {
+    /// <summary>
+    /// Command to run flaky test detection on a test assembly.
+    /// </summary>
     public class RunCommand(ILogger<RunCommand> logger, IConsoleService console, IFileSystemService fileSystem) : ICommand
     {
+        /// <summary>
+        /// Gets the name of the command.
+        /// </summary>
         public string Name => "run";
+
+        /// <summary>
+        /// Gets the description of the command.
+        /// </summary>
         public string Description => "Run flaky test detection on a test assembly";
 
+        /// <summary>
+        /// Executes the run command to analyze tests for flakiness.
+        /// </summary>
+        /// <param name="args">Command arguments including assembly path and options.</param>
+        /// <returns>Exit code: 0 for success, 1 for error, 2 for success with flaky tests found.</returns>
         public async Task<int> ExecuteAsync(string[] args)
         {
             RunOptions? options = ParseOptions(args);
@@ -68,6 +83,11 @@ namespace Cici.CLI.Commands
             }
         }
 
+        /// <summary>
+        /// Parses command line arguments into run options.
+        /// </summary>
+        /// <param name="args">Command line arguments to parse.</param>
+        /// <returns>Parsed options or null if parsing fails.</returns>
         private RunOptions? ParseOptions(string[] args)
         {
             RunOptions options = new();
@@ -150,6 +170,12 @@ namespace Cici.CLI.Commands
             return options;
         }
 
+        /// <summary>
+        /// Runs the flaky test analysis with progress tracking.
+        /// </summary>
+        /// <param name="options">Run configuration options.</param>
+        /// <param name="progressTask">Progress task for updating UI.</param>
+        /// <returns>The analysis results.</returns>
         private async Task<CiciRunResult> RunAnalysisAsync(RunOptions options, ProgressTask progressTask)
         {
             // Create reporters based on options
@@ -196,6 +222,11 @@ namespace Cici.CLI.Commands
             return result;
         }
 
+        /// <summary>
+        /// Creates reporter instances based on the specified report formats.
+        /// </summary>
+        /// <param name="options">Run options containing report format specifications.</param>
+        /// <returns>List of configured reporters.</returns>
         private List<IReporter> CreateReporters(RunOptions options)
         {
             List<IReporter> reporters = [];

@@ -5,11 +5,26 @@ using System.Reflection;
 
 namespace Cici.CLI.Commands
 {
+    /// <summary>
+    /// Command to display version and system information.
+    /// </summary>
     public class VersionCommand(ILogger<VersionCommand> logger, IConsoleService console) : ICommand
     {
+        /// <summary>
+        /// Gets the name of the command.
+        /// </summary>
         public string Name => "version";
+
+        /// <summary>
+        /// Gets the description of the command.
+        /// </summary>
         public string Description => "Show version information";
 
+        /// <summary>
+        /// Executes the version command, displaying version and system information.
+        /// </summary>
+        /// <param name="args">Command arguments (unused).</param>
+        /// <returns>Exit code (always 0 for success).</returns>
         public Task<int> ExecuteAsync(string[] args)
         {
             console.WriteHeader();

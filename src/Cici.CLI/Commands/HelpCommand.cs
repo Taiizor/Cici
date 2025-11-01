@@ -4,11 +4,26 @@ using Spectre.Console;
 
 namespace Cici.CLI.Commands
 {
+    /// <summary>
+    /// Command to display help information and usage instructions.
+    /// </summary>
     public class HelpCommand(ILogger<HelpCommand> logger, IConsoleService console) : ICommand
     {
+        /// <summary>
+        /// Gets the name of the command.
+        /// </summary>
         public string Name => "help";
+
+        /// <summary>
+        /// Gets the description of the command.
+        /// </summary>
         public string Description => "Show help and usage information";
 
+        /// <summary>
+        /// Executes the help command, displaying usage information and available commands.
+        /// </summary>
+        /// <param name="args">Command arguments (unused).</param>
+        /// <returns>Exit code (always 0 for success).</returns>
         public Task<int> ExecuteAsync(string[] args)
         {
             console.WriteHeader();
