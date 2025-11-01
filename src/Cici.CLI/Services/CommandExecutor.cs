@@ -1,0 +1,71 @@
+using Cici.CLI.Commands;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
+namespace Cici.CLI.Services;
+
+public class CommandExecutor
+{
+    private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<CommandExecutor> _logger;
+    private readonly IConsoleService _console;
+
+    public CommandExecutor(IServiceProvider serviceProvider, ILogger<CommandExecutor> logger, IConsoleService console)
+    {
+        _serviceProvider = serviceProvider;
+        _logger = logger;
+        _console = console;
+    }
+
+    public async Task<int> ExecuteAsync(string[] args)
+    {
+        try
+        {
+            // Parse command name
+            var commandName = args.Length > 0 ? args[0].ToLowerInvariant() : "help";
+            
+            // Handle help flags
+            if (commandName == "--help" || commandName == "-h" || commandName == "-?")
+            {
+                commandName = "help";
+            }
+            
+            // Handle version flags
+            if (commandName == "--version" || commandName == "-v")
+            {
+                commandName = "version";
+            }
+            
+            // Get all available commands
+            var commands = _serviceProvider.GetServices<ICommand>();
+            var command = commands.FirstOrDefault(c => c.Name.Equals(commandName, StringComparison.OrdinalIgnoreCase));
+            
+            if (command == null)
+            {
+                _console.WriteError($"Unknown command: '{commandName}'");
+                _console.WriteInfo("Use 'cici help' to see available commands.");
+                return 1;
+            }
+            
+            // Remove command name from args for command execution
+            var commandArgs = args.Length > 1 ? args.Skip(1).ToArray() : Array.Empty<string>();
+            
+            _logger.LogDebug("Executing command: {CommandName} with {ArgCount} arguments", commandName, commandArgs.Length);
+            
+            return await command.ExecuteAsync(commandArgs);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unhandled exception during command execution");
+            _console.WriteError($"An unexpected error occurred: {ex.Message}");
+            
+            if (ex.InnerException != null)
+            {
+                _console.WriteError($"Inner exception: {ex.InnerException.Message}");
+            }
+            
+            _console.WriteInfo("For more details, run with --verbose flag.");
+            return 1;
+        }
+    }
+}
