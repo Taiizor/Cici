@@ -1,12 +1,8 @@
-using System.CommandLine;
-using System.CommandLine.Invocation;
 using Cici;
 using Cici.Analyzer;
 using Cici.Reporter;
 using Cici.Runner;
 using Spectre.Console;
-
-var rootCommand = new RootCommand("Cici - Flaky Test Detector for .NET");
 
 // Add ASCII art header
 void PrintHeader()
@@ -19,60 +15,110 @@ void PrintHeader()
     AnsiConsole.WriteLine();
 }
 
-// Run command
-var runCommand = new Command("run", "Run flaky test detection on a test assembly");
-
-var assemblyOption = new Option<FileInfo>(
-    new[] { "--assembly", "-a" },
-    "Path to the test assembly (.dll)") { IsRequired = true };
-
-var filterOption = new Option<string?>(
-    new[] { "--filter", "-f" },
-    "Filter tests by name (partial match)");
-
-var repeatOption = new Option<int>(
-    new[] { "--repeat", "-r" },
-    getDefaultValue: () => 10,
-    "Number of times to run each test");
-
-var reportOption = new Option<string[]>(
-    new[] { "--report" },
-    getDefaultValue: () => new[] { "console" },
-    "Report formats (console, json, html)");
-
-var outputOption = new Option<DirectoryInfo?>(
-    new[] { "--output", "-o" },
-    "Output directory for reports");
-
-var parallelOption = new Option<bool>(
-    new[] { "--parallel", "-p" },
-    getDefaultValue: () => false,
-    "Run test iterations in parallel");
-
-runCommand.AddOption(assemblyOption);
-runCommand.AddOption(filterOption);
-runCommand.AddOption(repeatOption);
-runCommand.AddOption(reportOption);
-runCommand.AddOption(outputOption);
-runCommand.AddOption(parallelOption);
-
-runCommand.SetHandler(async (context) =>
+if (args.Length == 0 || args[0] == "--help" || args[0] == "-h")
 {
     PrintHeader();
+    Console.WriteLine("Usage: cici run --assembly <path> [options]");
+    Console.WriteLine();
+    Console.WriteLine("Commands:");
+    Console.WriteLine("  run                       Run flaky test detection on a test assembly");
+    Console.WriteLine("  version                   Show version information");
+    Console.WriteLine();
+    Console.WriteLine("Options:");
+    Console.WriteLine("  -a, --assembly <path>     Path to the test assembly (.dll) [required]");
+    Console.WriteLine("  -f, --filter <filter>     Filter tests by name (partial match)");
+    Console.WriteLine("  -r, --repeat <count>      Number of times to run each test (default: 10)");
+    Console.WriteLine("  --report <formats>        Report formats: console, json (default: console)");
+    Console.WriteLine("  -o, --output <dir>        Output directory for reports");
+    Console.WriteLine("  -p, --parallel            Run test iterations in parallel");
+    Console.WriteLine("  -h, --help                Show help and usage information");
+    return 0;
+}
+
+if (args[0] == "version")
+{
+    PrintHeader();
+    AnsiConsole.MarkupLine("[cyan]Version:[/] 1.0.0");
+    AnsiConsole.MarkupLine("[cyan]Runtime:[/] .NET 8.0");
+    return 0;
+}
+
+if (args[0] == "run")
+{
+    // Parse command line arguments
+    string? assemblyPath = null;
+    string? filter = null;
+    int repeat = 10;
+    var reportFormats = new List<string> { "console" };
+    string? outputDir = null;
+    bool parallel = false;
     
-    var assembly = context.ParseResult.GetValueForOption(assemblyOption)!;
-    var filter = context.ParseResult.GetValueForOption(filterOption);
-    var repeat = context.ParseResult.GetValueForOption(repeatOption);
-    var reportFormats = context.ParseResult.GetValueForOption(reportOption)!;
-    var output = context.ParseResult.GetValueForOption(outputOption);
-    var parallel = context.ParseResult.GetValueForOption(parallelOption);
-    
-    if (!assembly.Exists)
+    for (int i = 1; i < args.Length; i++)
     {
-        AnsiConsole.MarkupLine($"[red]Error: Assembly not found: {assembly.FullName}[/]");
-        context.ExitCode = 1;
-        return;
+        switch (args[i])
+        {
+            case "-a":
+            case "--assembly":
+                if (i + 1 < args.Length)
+                    assemblyPath = args[++i];
+                break;
+                
+            case "-f":
+            case "--filter":
+                if (i + 1 < args.Length)
+                    filter = args[++i];
+                break;
+                
+            case "-r":
+            case "--repeat":
+                if (i + 1 < args.Length && int.TryParse(args[++i], out var r))
+                    repeat = r;
+                break;
+                
+            case "--report":
+                if (i + 1 < args.Length)
+                {
+                    reportFormats.Clear();
+                    reportFormats.AddRange(args[++i].Split(','));
+                }
+                break;
+                
+            case "-o":
+            case "--output":
+                if (i + 1 < args.Length)
+                    outputDir = args[++i];
+                break;
+                
+            case "-p":
+            case "--parallel":
+                parallel = true;
+                break;
+        }
     }
+    
+    // Validate required arguments
+    if (string.IsNullOrEmpty(assemblyPath))
+    {
+        AnsiConsole.MarkupLine("[red]Error: Assembly path is required. Use -a or --assembly option.[/]");
+        return 1;
+    }
+    
+    if (!File.Exists(assemblyPath))
+    {
+        AnsiConsole.MarkupLine($"[red]Error: Assembly not found: {assemblyPath}[/]");
+        return 1;
+    }
+    
+    await RunAnalysis(assemblyPath, filter, repeat, reportFormats, outputDir, parallel);
+    return 0;
+}
+
+AnsiConsole.MarkupLine("[red]Unknown command. Use --help for usage information.[/]");
+return 1;
+
+async Task RunAnalysis(string assemblyPath, string? filter, int repeat, List<string> reportFormats, string? outputDir, bool parallel)
+{
+    PrintHeader();
     
     // Create reporters based on options
     var reporters = new List<IReporter>();
@@ -86,9 +132,9 @@ runCommand.SetHandler(async (context) =>
                 break;
             case "json":
                 var jsonReporter = new JsonReporter();
-                if (output != null)
+                if (outputDir != null)
                 {
-                    jsonReporter.OutputPath = Path.Combine(output.FullName, "flaky-report.json");
+                    jsonReporter.OutputPath = Path.Combine(outputDir, "flaky-report.json");
                 }
                 reporters.Add(jsonReporter);
                 break;
@@ -110,11 +156,11 @@ runCommand.SetHandler(async (context) =>
     // Configure runner options
     var options = new CiciRunOptions
     {
-        AssemblyPath = assembly.FullName,
+        AssemblyPath = assemblyPath,
         TestFilter = filter,
         RepeatCount = repeat,
         ParallelExecution = parallel,
-        OutputDirectory = output?.FullName
+        OutputDirectory = outputDir
     };
     
     // Configure services
@@ -137,39 +183,13 @@ runCommand.SetHandler(async (context) =>
     
     if (!result.Success)
     {
-        context.ExitCode = 1;
+        Environment.Exit(1);
         return;
     }
     
     // Set exit code based on flaky tests found
     if (result.FlakyTests > 0)
     {
-        context.ExitCode = 2; // Warning exit code
+        Environment.Exit(2); // Warning exit code
     }
-});
-
-rootCommand.AddCommand(runCommand);
-
-// Analyze command (for analyzing existing test results)
-var analyzeCommand = new Command("analyze", "Analyze existing test result files");
-analyzeCommand.SetHandler(() =>
-{
-    PrintHeader();
-    AnsiConsole.MarkupLine("[yellow]Analyze command not yet implemented[/]");
-});
-
-rootCommand.AddCommand(analyzeCommand);
-
-// Version command
-var versionCommand = new Command("version", "Show version information");
-versionCommand.SetHandler(() =>
-{
-    PrintHeader();
-    AnsiConsole.MarkupLine("[cyan]Version:[/] 1.0.0");
-    AnsiConsole.MarkupLine("[cyan]Runtime:[/] .NET 8.0");
-});
-
-rootCommand.AddCommand(versionCommand);
-
-// Execute the command
-return await rootCommand.InvokeAsync(args);
+}
