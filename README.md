@@ -10,12 +10,12 @@
 
 ## ✨ Features
 
-- 🔍 **Automatic Test Discovery** - Supports xUnit, NUnit, and MSTest frameworks
-- 🔄 **Multiple Test Executions** - Run each test multiple times to detect flakiness
+- ⚡ **Parallel Execution** - Speed up analysis with parallel test runs
+- 📄 **Multiple Report Formats** - Console, JSON, and HTML reports
 - 📊 **Detailed Analytics** - Get comprehensive reports on test stability
 - 🎨 **Beautiful Console Output** - Color-coded results with progress indicators
-- 📄 **Multiple Report Formats** - Console, JSON, and HTML reports
-- ⚡ **Parallel Execution** - Speed up analysis with parallel test runs
+- 🔄 **Multiple Test Executions** - Run each test multiple times to detect flakiness
+- 🔍 **Automatic Test Discovery** - Supports xUnit, NUnit, and MSTest frameworks
 - 🎯 **Smart Error Categorization** - Automatically categorizes common error patterns
 
 ## 🚀 Quick Start
