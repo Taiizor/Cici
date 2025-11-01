@@ -125,7 +125,7 @@ async Task RunAnalysis(string assemblyPath, string? filter, int repeat, List<str
     
     foreach (var format in reportFormats)
     {
-        switch (format.ToLower())
+        switch (format.ToLowerInvariant())
         {
             case "console":
                 reporters.Add(new ConsoleReporter());
@@ -148,7 +148,7 @@ async Task RunAnalysis(string assemblyPath, string? filter, int repeat, List<str
         }
     }
     
-    if (!reporters.Any())
+    if (reporters.Count == 0)
     {
         reporters.Add(new ConsoleReporter());
     }
