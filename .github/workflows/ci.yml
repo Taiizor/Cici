@@ -34,11 +34,15 @@ jobs:
     - name: Build
       run: dotnet build --configuration ${{ matrix.configuration }} --no-restore
       
-    - name: Test
+    - name: Test Core Library
       run: |
-        dotnet test --configuration ${{ matrix.configuration }} --no-build --verbosity normal \
-          --collect:"XPlat Code Coverage" \
-          --filter "FullyQualifiedName!~AlwaysFailingTests"
+        dotnet test tests/Cici.Tests/Cici.Tests.csproj \
+          --configuration ${{ matrix.configuration }} \
+          --no-build \
+          --verbosity normal \
+          --logger "trx;LogFileName=test-results.trx" \
+          --logger "console;verbosity=detailed" \
+          --results-directory ./test-results
       
     - name: Run Cici on Sample Tests
       if: matrix.configuration == 'Release' && matrix.os == 'ubuntu-latest'
