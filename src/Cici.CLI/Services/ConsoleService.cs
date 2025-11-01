@@ -29,7 +29,7 @@ public class ConsoleService : IConsoleService
         AnsiConsole.Write(new FigletText("CICI")
             .LeftJustified()
             .Color(Color.Cyan1));
-        
+
         AnsiConsole.MarkupLine("[dim]Flaky Test Detector v1.0.1[/]");
         AnsiConsole.WriteLine();
     }

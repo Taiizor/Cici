@@ -19,14 +19,14 @@ public class Program
 
         // Configure Serilog
         ConfigureLogging(args);
-        
+
         try
         {
             Log.Information("Starting Cici CLI");
-            
-            var host = CreateHostBuilder(args).Build();
-            var executor = host.Services.GetRequiredService<CommandExecutor>();
-            
+
+            IHost host = CreateHostBuilder(args).Build();
+            CommandExecutor executor = host.Services.GetRequiredService<CommandExecutor>();
+
             return await executor.ExecuteAsync(args);
         }
         catch (Exception ex)
@@ -39,9 +39,10 @@ public class Program
             await Log.CloseAndFlushAsync();
         }
     }
-    
-    private static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
+
+    private static IHostBuilder CreateHostBuilder(string[] args)
+    {
+        return Host.CreateDefaultBuilder(args)
             .UseSerilog()
             .ConfigureAppConfiguration((context, config) =>
             {
@@ -57,12 +58,12 @@ public class Program
                 services.AddSingleton<IConsoleService, ConsoleService>();
                 services.AddSingleton<IFileSystemService, FileSystemService>();
                 services.AddSingleton<CommandExecutor>();
-                
+
                 // Register commands
                 services.AddTransient<ICommand, RunCommand>();
                 services.AddTransient<ICommand, VersionCommand>();
                 services.AddTransient<ICommand, HelpCommand>();
-                
+
                 // Configure logging
                 services.AddLogging(builder =>
                 {
@@ -70,20 +71,21 @@ public class Program
                     builder.AddSerilog();
                 });
             });
-    
+    }
+
     private static void ConfigureLogging(string[] args)
     {
-        var logLevel = args.Contains("-v") || args.Contains("--verbose") 
-            ? LogEventLevel.Debug 
+        LogEventLevel logLevel = args.Contains("-v") || args.Contains("--verbose")
+            ? LogEventLevel.Debug
             : LogEventLevel.Information;
-        
-        var logPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), 
-            "Cici", 
+
+        string logPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "Cici",
             "logs");
-        
+
         Directory.CreateDirectory(logPath);
-        
+
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Is(logLevel)
             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
@@ -98,7 +100,7 @@ public class Program
                 retainedFileCountLimit: 7,
                 outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
             .WriteTo.Console(
-                outputTemplate: logLevel == LogEventLevel.Debug 
+                outputTemplate: logLevel == LogEventLevel.Debug
                     ? "{Timestamp:HH:mm:ss} [{Level:u3}] {Message:lj}{NewLine}{Exception}"
                     : "{Message:lj}{NewLine}{Exception}",
                 restrictedToMinimumLevel: logLevel)

@@ -26,8 +26,8 @@ public class RunCommand : ICommand
 
     public async Task<int> ExecuteAsync(string[] args)
     {
-        var options = ParseOptions(args);
-        
+        RunOptions? options = ParseOptions(args);
+
         if (options == null)
         {
             _console.WriteError("Invalid arguments. Use --help for usage information.");
@@ -44,9 +44,9 @@ public class RunCommand : ICommand
         try
         {
             _logger.LogInformation("Starting flaky test detection for {Assembly}", options.AssemblyPath);
-            
+
             // Show progress
-            var result = await AnsiConsole.Progress()
+            CiciRunResult result = await AnsiConsole.Progress()
                 .Columns(new ProgressColumn[]
                 {
                     new TaskDescriptionColumn(),
@@ -56,7 +56,7 @@ public class RunCommand : ICommand
                 })
                 .StartAsync(async ctx =>
                 {
-                    var task = ctx.AddTask("[cyan]Analyzing tests...[/]");
+                    ProgressTask task = ctx.AddTask("[cyan]Analyzing tests...[/]");
                     return await RunAnalysisAsync(options, task);
                 });
 
@@ -81,8 +81,8 @@ public class RunCommand : ICommand
 
     private RunOptions? ParseOptions(string[] args)
     {
-        var options = new RunOptions();
-        
+        RunOptions options = new();
+
         for (int i = 0; i < args.Length; i++)
         {
             switch (args[i])
@@ -90,21 +90,30 @@ public class RunCommand : ICommand
                 case "-a":
                 case "--assembly":
                     if (i + 1 < args.Length)
+                    {
                         options.AssemblyPath = args[++i];
+                    }
+
                     break;
-                    
+
                 case "-f":
                 case "--filter":
                     if (i + 1 < args.Length)
+                    {
                         options.Filter = args[++i];
+                    }
+
                     break;
-                    
+
                 case "-r":
                 case "--repeat":
                     if (i + 1 < args.Length && int.TryParse(args[++i], out var r))
+                    {
                         options.RepeatCount = r;
+                    }
+
                     break;
-                    
+
                 case "--report":
                     if (i + 1 < args.Length)
                     {
@@ -112,62 +121,68 @@ public class RunCommand : ICommand
                         options.ReportFormats.AddRange(args[++i].Split(','));
                     }
                     break;
-                    
+
                 case "-o":
                 case "--output":
                     if (i + 1 < args.Length)
+                    {
                         options.OutputDirectory = args[++i];
+                    }
+
                     break;
-                    
+
                 case "-p":
                 case "--parallel":
                     options.Parallel = true;
                     break;
-                    
+
                 case "--timeout":
                     if (i + 1 < args.Length && int.TryParse(args[++i], out var t))
+                    {
                         options.TimeoutSeconds = t;
+                    }
+
                     break;
-                    
+
                 case "-v":
                 case "--verbose":
                     options.Verbose = true;
                     break;
             }
         }
-        
+
         // Validate required options
         if (string.IsNullOrEmpty(options.AssemblyPath))
         {
             _console.WriteError("Assembly path is required. Use -a or --assembly option.");
             return null;
         }
-        
+
         return options;
     }
 
     private async Task<CiciRunResult> RunAnalysisAsync(RunOptions options, ProgressTask progressTask)
     {
         // Create reporters based on options
-        var reporters = CreateReporters(options);
-        
+        List<IReporter> reporters = CreateReporters(options);
+
         // Configure services
-        var executorOptions = new TestExecutorOptions
+        TestExecutorOptions executorOptions = new()
         {
             ParallelExecution = options.Parallel,
             TimeoutSeconds = options.TimeoutSeconds,
             CollectDetailedErrors = true
         };
-        
-        var runner = new CiciRunner(
+
+        CiciRunner runner = new(
             discoveryService: new TestDiscoveryService(),
             executor: new TestExecutor(executorOptions),
             analyzer: new FlakyAnalyzer(),
             reporters: reporters
         );
-        
+
         // Create run options
-        var runOptions = new CiciRunOptions
+        CiciRunOptions runOptions = new()
         {
             AssemblyPath = options.AssemblyPath,
             TestFilter = options.Filter,
@@ -175,22 +190,22 @@ public class RunCommand : ICommand
             ParallelExecution = options.Parallel,
             OutputDirectory = options.OutputDirectory
         };
-        
+
         // Update progress
         progressTask.Increment(50);
-        
+
         // Run the analysis
-        var result = await runner.RunAsync(runOptions);
-        
+        CiciRunResult result = await runner.RunAsync(runOptions);
+
         progressTask.Increment(50);
-        
+
         return result;
     }
-    
+
     private List<IReporter> CreateReporters(RunOptions options)
     {
-        var reporters = new List<IReporter>();
-        
+        List<IReporter> reporters = [];
+
         foreach (var format in options.ReportFormats)
         {
             switch (format.ToLowerInvariant())
@@ -198,9 +213,9 @@ public class RunCommand : ICommand
                 case "console":
                     reporters.Add(new ConsoleReporter());
                     break;
-                    
+
                 case "json":
-                    var jsonReporter = new JsonReporter();
+                    JsonReporter jsonReporter = new();
                     if (!string.IsNullOrEmpty(options.OutputDirectory))
                     {
                         _fileSystem.EnsureDirectoryExists(options.OutputDirectory);
@@ -208,22 +223,22 @@ public class RunCommand : ICommand
                     }
                     reporters.Add(jsonReporter);
                     break;
-                    
+
                 case "html":
                     _console.WriteWarning("HTML reporter is not yet implemented.");
                     break;
-                    
+
                 default:
                     _console.WriteWarning($"Unknown report format: {format}");
                     break;
             }
         }
-        
+
         if (reporters.Count == 0)
         {
             reporters.Add(new ConsoleReporter());
         }
-        
+
         return reporters;
     }
 }

@@ -22,48 +22,48 @@ public class CommandExecutor
         try
         {
             // Parse command name
-            var commandName = args.Length > 0 ? args[0].ToLowerInvariant() : "help";
-            
+            string commandName = args.Length > 0 ? args[0].ToLowerInvariant() : "help";
+
             // Handle help flags
-            if (commandName == "--help" || commandName == "-h" || commandName == "-?")
+            if (commandName is "--help" or "-h" or "-?")
             {
                 commandName = "help";
             }
-            
+
             // Handle version flags
-            if (commandName == "--version" || commandName == "-v")
+            if (commandName is "--version" or "-v")
             {
                 commandName = "version";
             }
-            
+
             // Get all available commands
-            var commands = _serviceProvider.GetServices<ICommand>();
-            var command = commands.FirstOrDefault(c => c.Name.Equals(commandName, StringComparison.OrdinalIgnoreCase));
-            
+            IEnumerable<ICommand> commands = _serviceProvider.GetServices<ICommand>();
+            ICommand? command = commands.FirstOrDefault(c => c.Name.Equals(commandName, StringComparison.OrdinalIgnoreCase));
+
             if (command == null)
             {
                 _console.WriteError($"Unknown command: '{commandName}'");
                 _console.WriteInfo("Use 'cici help' to see available commands.");
                 return 1;
             }
-            
+
             // Remove command name from args for command execution
-            var commandArgs = args.Length > 1 ? args.Skip(1).ToArray() : Array.Empty<string>();
-            
+            string[] commandArgs = args.Length > 1 ? args.Skip(1).ToArray() : Array.Empty<string>();
+
             _logger.LogDebug("Executing command: {CommandName} with {ArgCount} arguments", commandName, commandArgs.Length);
-            
+
             return await command.ExecuteAsync(commandArgs);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unhandled exception during command execution");
             _console.WriteError($"An unexpected error occurred: {ex.Message}");
-            
+
             if (ex.InnerException != null)
             {
                 _console.WriteError($"Inner exception: {ex.InnerException.Message}");
             }
-            
+
             _console.WriteInfo("For more details, run with --verbose flag.");
             return 1;
         }
