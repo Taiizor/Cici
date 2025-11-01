@@ -1,9 +1,10 @@
 using Cici.Models;
 
-namespace Cici.Runner;
-
-public interface ITestDiscoveryService
+namespace Cici.Runner
 {
-    Task<IEnumerable<TestInfo>> DiscoverTestsAsync(string assemblyPath);
-    Task<IEnumerable<TestInfo>> DiscoverTestsAsync(string assemblyPath, string? filter);
+    public interface ITestDiscoveryService
+    {
+        Task<IEnumerable<TestInfo>> DiscoverTestsAsync(string assemblyPath);
+        Task<IEnumerable<TestInfo>> DiscoverTestsAsync(string assemblyPath, string? filter);
+    }
 }

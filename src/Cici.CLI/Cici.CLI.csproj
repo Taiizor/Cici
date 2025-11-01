@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
@@ -9,13 +9,15 @@
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>cici</ToolCommandName>
         <PackageId>Cici.CLI</PackageId>
-        <Version>1.0.1</Version>
+        <Version>1.0.2</Version>
         <Authors>Cici Team</Authors>
         <Description>Flaky Test Detector for .NET - CLI Tool</Description>
         <PackageTags>testing;flaky;test;automation;ci;quality;cli</PackageTags>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/Taiizor/Cici</RepositoryUrl>
         <AssemblyName>cici-cli</AssemblyName>
+        <!-- Suppress code analysis warnings for CLI tool -->
+        <NoWarn>$(NoWarn);CA1848;CA1305</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
