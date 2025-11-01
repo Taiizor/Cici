@@ -208,12 +208,6 @@ namespace Cici.Reporter
     }
 
     /// <summary>
-    /// Represents the result of a single JSON-based execution attempt, including status, timing, and error details.
-    /// </summary>
-    /// <remarks>This class encapsulates information about an individual execution, such as whether it
-    /// succeeded, when it occurred, how long it took, and any error information if the attempt failed. It is typically
-    /// used to record or analyze the outcome of JSON-driven operations, such as tests or jobs.</remarks>
-    /// <summary>
     /// Individual test execution data for the JSON report.
     /// </summary>
     public class JsonExecution
