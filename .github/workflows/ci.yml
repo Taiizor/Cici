@@ -36,23 +36,12 @@ jobs:
       
     - name: Test Core Library
       run: |
-        dotnet test tests/Cici.Tests/Cici.Tests.csproj \
-          --configuration ${{ matrix.configuration }} \
-          --no-build \
-          --verbosity normal \
-          --logger "trx;LogFileName=test-results.trx" \
-          --logger "console;verbosity=detailed" \
-          --results-directory ./test-results
+      run: dotnet test tests/Cici.Tests/Cici.Tests.csproj --configuration ${{ matrix.configuration }} --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --logger "console;verbosity=detailed" --results-directory ./test-results
       
     - name: Run Cici on Sample Tests
       if: matrix.configuration == 'Release' && matrix.os == 'ubuntu-latest'
       continue-on-error: true
-      run: |
-        dotnet run --project src/Cici.CLI/Cici.CLI.csproj -- run \
-          --assembly samples/SampleTests/bin/${{ matrix.configuration }}/net8.0/SampleTests.dll \
-          --repeat 5 \
-          --report json \
-          --output ./test-results
+      run: dotnet run --project src/Cici.CLI/Cici.CLI.csproj -- run --assembly samples/SampleTests/bin/${{ matrix.configuration }}/net8.0/SampleTests.dll --repeat 5 --report json --output ./test-results
           
     - name: Upload Test Results
       if: always() && matrix.configuration == 'Release'
