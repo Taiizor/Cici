@@ -35,7 +35,6 @@ jobs:
       run: dotnet build --configuration ${{ matrix.configuration }} --no-restore
       
     - name: Test Core Library
-      run: |
       run: dotnet test tests/Cici.Tests/Cici.Tests.csproj --configuration ${{ matrix.configuration }} --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --logger "console;verbosity=detailed" --results-directory ./test-results
       
     - name: Run Cici on Sample Tests
