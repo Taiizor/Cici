@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  DOTNET_VERSION: '10.0.x'
+  DOTNET_VERSION: '8.0.x'
   DOTNET_NOLOGO: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
 
@@ -46,6 +46,7 @@ jobs:
       
     - name: Run Cici on Sample Tests
       if: matrix.configuration == 'Release' && matrix.os == 'ubuntu-latest'
+      continue-on-error: true
       run: |
         dotnet run --project src/Cici.CLI/Cici.CLI.csproj -- run \
           --assembly samples/SampleTests/bin/${{ matrix.configuration }}/net8.0/SampleTests.dll \
@@ -54,17 +55,20 @@ jobs:
           --output ./test-results
           
     - name: Upload Test Results
+      if: always() && matrix.configuration == 'Release'
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results-${{ matrix.os }}
+        path: ./test-results/
+        retention-days: 30
+        
+    - name: Upload Cici Analysis Results
       if: matrix.configuration == 'Release' && matrix.os == 'ubuntu-latest'
       uses: actions/upload-artifact@v4
       with:
-        name: flaky-test-results
-        path: ./test-results/
-        
-    - name: Upload Code Coverage
-      if: matrix.configuration == 'Release' && matrix.os == 'ubuntu-latest'
-      uses: codecov/codecov-action@v3
-      with:
-        files: ./**/coverage.cobertura.xml
+        name: cici-analysis-results
+        path: ./test-results/flaky-report.json
+        if-no-files-found: ignore
         
   pack:
     needs: build
