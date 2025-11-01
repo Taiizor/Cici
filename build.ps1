@@ -1,6 +1,6 @@
 ﻿param(
     [string]$Configuration = "Release",
-    [switch]$Pack,
+    [switch]$Pack = $true,
     [switch]$Test,
     [switch]$Clean
 )
