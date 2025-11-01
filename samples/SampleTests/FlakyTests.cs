@@ -71,7 +71,7 @@ public class FlakyTests
         if (shouldFail)
         {
             // Simulate memory issue
-            Assert.True(false, "Simulated memory allocation failure");
+            Assert.Fail("Simulated memory allocation failure");
         }
         
         // Otherwise pass

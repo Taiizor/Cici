@@ -1,6 +1,7 @@
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31903.59
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11123.170 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E5D0B4B5-1234-4567-89AB-CDEF01234567}"
 EndProject
@@ -15,6 +16,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cici.Tests", "tests\Cici.Tests\Cici.Tests.csproj", "{D1D2D3D4-6789-4567-89AB-CDEF01234567}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleTests", "samples\SampleTests\SampleTests.csproj", "{E1E2E3E4-7890-4567-89AB-CDEF01234567}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Çözüm Öğeleri", "Çözüm Öğeleri", "{AB983228-5213-4C5B-A7AA-619382491380}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		Directory.Build.props = Directory.Build.props
+		global.json = global.json
+		NuGet.Config = NuGet.Config
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,10 +48,16 @@ Global
 		{E1E2E3E4-7890-4567-89AB-CDEF01234567}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E1E2E3E4-7890-4567-89AB-CDEF01234567}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B1B2B3B4-4567-4567-89AB-CDEF01234567} = {E5D0B4B5-1234-4567-89AB-CDEF01234567}
 		{C1C2C3C4-5678-4567-89AB-CDEF01234567} = {E5D0B4B5-1234-4567-89AB-CDEF01234567}
 		{D1D2D3D4-6789-4567-89AB-CDEF01234567} = {F5E0C4C5-2345-4567-89AB-CDEF01234567}
 		{E1E2E3E4-7890-4567-89AB-CDEF01234567} = {A5B0D4D5-3456-4567-89AB-CDEF01234567}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7AC29FC5-E102-4A23-8122-17F2C28926DA}
 	EndGlobalSection
 EndGlobal

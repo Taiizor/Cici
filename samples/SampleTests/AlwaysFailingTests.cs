@@ -32,7 +32,7 @@ public class AlwaysFailingTests
     {
         // Simulates a test that always times out
         await Task.Delay(60000); // 60 second delay (will timeout)
-        Assert.True(false, "This should never be reached");
+        Assert.Fail("This should never be reached");
     }
     
     [Theory]
