@@ -8,102 +8,103 @@ using Serilog;
 using Serilog.Events;
 using System.Text;
 
-namespace Cici.CLI;
-
-public class Program
+namespace Cici.CLI
 {
-    public static async Task<int> Main(string[] args)
+    public class Program
     {
-        Console.InputEncoding = Encoding.UTF8;
-        Console.OutputEncoding = Encoding.UTF8;
-
-        // Configure Serilog
-        ConfigureLogging(args);
-
-        try
+        public static async Task<int> Main(string[] args)
         {
-            Log.Information("Starting Cici CLI");
+            Console.InputEncoding = Encoding.UTF8;
+            Console.OutputEncoding = Encoding.UTF8;
 
-            IHost host = CreateHostBuilder(args).Build();
-            CommandExecutor executor = host.Services.GetRequiredService<CommandExecutor>();
+            // Configure Serilog
+            ConfigureLogging(args);
 
-            return await executor.ExecuteAsync(args);
-        }
-        catch (Exception ex)
-        {
-            Log.Fatal(ex, "Application terminated unexpectedly");
-            return 1;
-        }
-        finally
-        {
-            await Log.CloseAndFlushAsync();
-        }
-    }
-
-    private static IHostBuilder CreateHostBuilder(string[] args)
-    {
-        return Host.CreateDefaultBuilder(args)
-            .UseSerilog()
-            .ConfigureAppConfiguration((context, config) =>
+            try
             {
-                config.SetBasePath(Directory.GetCurrentDirectory());
-                config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-                config.AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: true);
-                config.AddEnvironmentVariables("CICI_");
-                config.AddCommandLine(args);
-            })
-            .ConfigureServices((context, services) =>
+                Log.Information("Starting Cici CLI");
+
+                IHost host = CreateHostBuilder(args).Build();
+                CommandExecutor executor = host.Services.GetRequiredService<CommandExecutor>();
+
+                return await executor.ExecuteAsync(args);
+            }
+            catch (Exception ex)
             {
-                // Register services
-                services.AddSingleton<IConsoleService, ConsoleService>();
-                services.AddSingleton<IFileSystemService, FileSystemService>();
-                services.AddSingleton<CommandExecutor>();
+                Log.Fatal(ex, "Application terminated unexpectedly");
+                return 1;
+            }
+            finally
+            {
+                await Log.CloseAndFlushAsync();
+            }
+        }
 
-                // Register commands
-                services.AddTransient<ICommand, RunCommand>();
-                services.AddTransient<ICommand, VersionCommand>();
-                services.AddTransient<ICommand, HelpCommand>();
-
-                // Configure logging
-                services.AddLogging(builder =>
+        private static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
+                .UseSerilog()
+                .ConfigureAppConfiguration((context, config) =>
                 {
-                    builder.ClearProviders();
-                    builder.AddSerilog();
+                    config.SetBasePath(Directory.GetCurrentDirectory());
+                    config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+                    config.AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: true);
+                    config.AddEnvironmentVariables("CICI_");
+                    config.AddCommandLine(args);
+                })
+                .ConfigureServices((context, services) =>
+                {
+                    // Register services
+                    services.AddSingleton<IConsoleService, ConsoleService>();
+                    services.AddSingleton<IFileSystemService, FileSystemService>();
+                    services.AddSingleton<CommandExecutor>();
+
+                    // Register commands
+                    services.AddTransient<ICommand, RunCommand>();
+                    services.AddTransient<ICommand, VersionCommand>();
+                    services.AddTransient<ICommand, HelpCommand>();
+
+                    // Configure logging
+                    services.AddLogging(builder =>
+                    {
+                        builder.ClearProviders();
+                        builder.AddSerilog();
+                    });
                 });
-            });
-    }
+        }
 
-    private static void ConfigureLogging(string[] args)
-    {
-        LogEventLevel logLevel = args.Contains("-v") || args.Contains("--verbose")
-            ? LogEventLevel.Debug
-            : LogEventLevel.Information;
+        private static void ConfigureLogging(string[] args)
+        {
+            LogEventLevel logLevel = args.Contains("-v") || args.Contains("--verbose")
+                ? LogEventLevel.Debug
+                : LogEventLevel.Information;
 
-        string logPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "Cici",
-            "logs");
+            string logPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "Cici",
+                "logs");
 
-        Directory.CreateDirectory(logPath);
+            Directory.CreateDirectory(logPath);
 
-        Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Is(logLevel)
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-            .MinimumLevel.Override("System", LogEventLevel.Warning)
-            .Enrich.FromLogContext()
-            .Enrich.WithMachineName()
-            .Enrich.WithProcessId()
-            .Enrich.WithThreadId()
-            .WriteTo.File(
-                Path.Combine(logPath, "cici-.log"),
-                rollingInterval: RollingInterval.Day,
-                retainedFileCountLimit: 7,
-                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
-            .WriteTo.Console(
-                outputTemplate: logLevel == LogEventLevel.Debug
-                    ? "{Timestamp:HH:mm:ss} [{Level:u3}] {Message:lj}{NewLine}{Exception}"
-                    : "{Message:lj}{NewLine}{Exception}",
-                restrictedToMinimumLevel: logLevel)
-            .CreateLogger();
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Is(logLevel)
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .MinimumLevel.Override("System", LogEventLevel.Warning)
+                .Enrich.FromLogContext()
+                .Enrich.WithMachineName()
+                .Enrich.WithProcessId()
+                .Enrich.WithThreadId()
+                .WriteTo.File(
+                    Path.Combine(logPath, "cici-.log"),
+                    rollingInterval: RollingInterval.Day,
+                    retainedFileCountLimit: 7,
+                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
+                .WriteTo.Console(
+                    outputTemplate: logLevel == LogEventLevel.Debug
+                        ? "{Timestamp:HH:mm:ss} [{Level:u3}] {Message:lj}{NewLine}{Exception}"
+                        : "{Message:lj}{NewLine}{Exception}",
+                    restrictedToMinimumLevel: logLevel)
+                .CreateLogger();
+        }
     }
 }

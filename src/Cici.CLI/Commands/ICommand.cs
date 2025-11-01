@@ -1,8 +1,9 @@
-namespace Cici.CLI.Commands;
-
-public interface ICommand
+namespace Cici.CLI.Commands
 {
-    string Name { get; }
-    string Description { get; }
-    Task<int> ExecuteAsync(string[] args);
+    public interface ICommand
+    {
+        string Name { get; }
+        string Description { get; }
+        Task<int> ExecuteAsync(string[] args);
+    }
 }

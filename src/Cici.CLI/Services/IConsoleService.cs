@@ -1,12 +1,13 @@
-namespace Cici.CLI.Services;
-
-public interface IConsoleService
+namespace Cici.CLI.Services
 {
-    void WriteInfo(string message);
-    void WriteSuccess(string message);
-    void WriteWarning(string message);
-    void WriteError(string message);
-    void WriteHeader();
-    T Prompt<T>(string message);
-    bool Confirm(string message);
+    public interface IConsoleService
+    {
+        void WriteInfo(string message);
+        void WriteSuccess(string message);
+        void WriteWarning(string message);
+        void WriteError(string message);
+        void WriteHeader();
+        T Prompt<T>(string message);
+        bool Confirm(string message);
+    }
 }

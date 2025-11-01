@@ -2,70 +2,71 @@ using Cici.CLI.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Cici.CLI.Services;
-
-public class CommandExecutor
+namespace Cici.CLI.Services
 {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<CommandExecutor> _logger;
-    private readonly IConsoleService _console;
-
-    public CommandExecutor(IServiceProvider serviceProvider, ILogger<CommandExecutor> logger, IConsoleService console)
+    public class CommandExecutor
     {
-        _serviceProvider = serviceProvider;
-        _logger = logger;
-        _console = console;
-    }
+        private readonly IServiceProvider _serviceProvider;
+        private readonly ILogger<CommandExecutor> _logger;
+        private readonly IConsoleService _console;
 
-    public async Task<int> ExecuteAsync(string[] args)
-    {
-        try
+        public CommandExecutor(IServiceProvider serviceProvider, ILogger<CommandExecutor> logger, IConsoleService console)
         {
-            // Parse command name
-            string commandName = args.Length > 0 ? args[0].ToLowerInvariant() : "help";
+            _serviceProvider = serviceProvider;
+            _logger = logger;
+            _console = console;
+        }
 
-            // Handle help flags
-            if (commandName is "--help" or "-h" or "-?")
+        public async Task<int> ExecuteAsync(string[] args)
+        {
+            try
             {
-                commandName = "help";
+                // Parse command name
+                string commandName = args.Length > 0 ? args[0].ToLowerInvariant() : "help";
+
+                // Handle help flags
+                if (commandName is "--help" or "-h" or "-?")
+                {
+                    commandName = "help";
+                }
+
+                // Handle version flags
+                if (commandName is "--version" or "-v")
+                {
+                    commandName = "version";
+                }
+
+                // Get all available commands
+                IEnumerable<ICommand> commands = _serviceProvider.GetServices<ICommand>();
+                ICommand? command = commands.FirstOrDefault(c => c.Name.Equals(commandName, StringComparison.OrdinalIgnoreCase));
+
+                if (command == null)
+                {
+                    _console.WriteError($"Unknown command: '{commandName}'");
+                    _console.WriteInfo("Use 'cici help' to see available commands.");
+                    return 1;
+                }
+
+                // Remove command name from args for command execution
+                string[] commandArgs = args.Length > 1 ? args.Skip(1).ToArray() : Array.Empty<string>();
+
+                _logger.LogDebug("Executing command: {CommandName} with {ArgCount} arguments", commandName, commandArgs.Length);
+
+                return await command.ExecuteAsync(commandArgs);
             }
-
-            // Handle version flags
-            if (commandName is "--version" or "-v")
+            catch (Exception ex)
             {
-                commandName = "version";
-            }
+                _logger.LogError(ex, "Unhandled exception during command execution");
+                _console.WriteError($"An unexpected error occurred: {ex.Message}");
 
-            // Get all available commands
-            IEnumerable<ICommand> commands = _serviceProvider.GetServices<ICommand>();
-            ICommand? command = commands.FirstOrDefault(c => c.Name.Equals(commandName, StringComparison.OrdinalIgnoreCase));
+                if (ex.InnerException != null)
+                {
+                    _console.WriteError($"Inner exception: {ex.InnerException.Message}");
+                }
 
-            if (command == null)
-            {
-                _console.WriteError($"Unknown command: '{commandName}'");
-                _console.WriteInfo("Use 'cici help' to see available commands.");
+                _console.WriteInfo("For more details, run with --verbose flag.");
                 return 1;
             }
-
-            // Remove command name from args for command execution
-            string[] commandArgs = args.Length > 1 ? args.Skip(1).ToArray() : Array.Empty<string>();
-
-            _logger.LogDebug("Executing command: {CommandName} with {ArgCount} arguments", commandName, commandArgs.Length);
-
-            return await command.ExecuteAsync(commandArgs);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Unhandled exception during command execution");
-            _console.WriteError($"An unexpected error occurred: {ex.Message}");
-
-            if (ex.InnerException != null)
-            {
-                _console.WriteError($"Inner exception: {ex.InnerException.Message}");
-            }
-
-            _console.WriteInfo("For more details, run with --verbose flag.");
-            return 1;
         }
     }
 }
