@@ -1,14 +1,12 @@
 # 🎯 Cici - Flaky Test Detector for .NET
 
-<div align="center">
-
 [![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![NuGet](https://img.shields.io/badge/NuGet-v1.0.0-blue)](https://www.nuget.org)
+[![NuGet](https://img.shields.io/nuget/v/Cici.svg)](https://www.nuget.org/packages/Cici/)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/Cici.svg)](https://www.nuget.org/packages/Cici/)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/Taiizor/Cici/ci.yml?branch=main)](https://github.com/Taiizor/Cici/actions)
 
-**Cici** is a powerful flaky test detection tool for .NET projects that helps you identify unreliable tests in your test suite.
-
-</div>
+**Cici** is a powerful flaky test detection tool for .NET projects that helps you identify unreliable tests in your test suite. It runs your tests multiple times, analyzes failure patterns, and provides detailed reports to help you improve test reliability.
 
 ## ✨ Features
 
@@ -250,6 +248,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-<div align="center">
-Made with ❤️ for reliable testing
-</div>
+**Made with ❤️ for reliable testing**

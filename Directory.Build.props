@@ -1,29 +1,29 @@
 <Project>
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <AnalysisLevel>latest-recommended</AnalysisLevel>
-    
-    <!-- Package metadata -->
-    <Authors>Cici Team</Authors>
-    <Company>Cici</Company>
-    <Product>Cici - Flaky Test Detector</Product>
-    <Copyright>Copyright © 2024 Cici Team</Copyright>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/Taiizor/Cici</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/Taiizor/Cici</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageTags>testing;flaky;test;automation;ci;quality;xunit;nunit;mstest</PackageTags>
-    <PackageIcon>icon.png</PackageIcon>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <AnalysisLevel>latest-recommended</AnalysisLevel>
 
-  <ItemGroup Condition="'$(IsPackable)' == 'true'">
-    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" />
-      <None Include="$(MSBuildThisFileDirectory)icon.png" Pack="true" PackagePath="icon.png" />
-  </ItemGroup>
+        <!-- Package metadata -->
+        <Authors>Cici Team</Authors>
+        <Company>Cici</Company>
+        <Product>Cici - Flaky Test Detector</Product>
+        <Copyright>Copyright © 2025 Cici Team</Copyright>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/Taiizor/Cici</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Taiizor/Cici</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>testing;flaky;test;automation;ci;quality;xunit;nunit;mstest</PackageTags>
+        <PackageIcon>icon.png</PackageIcon>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(IsPackable)' == 'true'">
+        <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" />
+        <None Include="$(MSBuildThisFileDirectory)icon.png" Pack="true" PackagePath="icon.png" />
+    </ItemGroup>
 </Project>

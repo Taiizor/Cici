@@ -1,23 +1,78 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+        
+        <!-- Tool Configuration -->
         <IsPackable>true</IsPackable>
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>cici</ToolCommandName>
+        <AssemblyName>cici-cli</AssemblyName>
+        
+        <!-- Package Information -->
         <PackageId>Cici.CLI</PackageId>
         <Version>1.0.4</Version>
-        <Authors>Cici Team</Authors>
-        <Description>Flaky Test Detector for .NET - CLI Tool</Description>
-        <PackageTags>testing;flaky;test;automation;ci;quality;cli</PackageTags>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <Authors>Taiizor</Authors>
+        <Company>Taiizor</Company>
+        <Copyright>Copyright © 2024 Taiizor</Copyright>
+        <Product>Cici CLI - Flaky Test Detector Tool</Product>
+        
+        <!-- Package Metadata -->
+        <Title>Cici CLI - Flaky Test Detector</Title>
+        <Description>Command-line tool for detecting flaky tests in .NET projects. Run your tests multiple times, analyze failure patterns, and get detailed reports. Features include parallel execution, multiple report formats (console, JSON, HTML), and CI/CD integration support.</Description>
+        <Summary>CLI tool to detect and analyze flaky tests in .NET test suites</Summary>
+        <PackageTags>cli;dotnet-tool;testing;flaky-tests;test-automation;ci-cd;quality-assurance;test-analysis;xunit;nunit;mstest;console-app</PackageTags>
+        
+        <!-- Repository Information -->
+        <PackageProjectUrl>https://github.com/Taiizor/Cici</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Taiizor/Cici</RepositoryUrl>
-        <AssemblyName>cici-cli</AssemblyName>
-        <!-- Suppress code analysis warnings for CLI tool -->
+        <RepositoryType>git</RepositoryType>
+        
+        <!-- License -->
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        
+        <!-- Documentation -->
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageIcon>icon.png</PackageIcon>
+        
+        <!-- Build Options -->
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <Deterministic>true</Deterministic>
+        <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+        
+        <!-- Code Analysis -->
         <NoWarn>$(NoWarn);CA1848;CA1305</NoWarn>
+        
+        <!-- Release Notes -->
+        <PackageReleaseNotes>
+v1.0.4:
+- Fixed circular dependency in help command
+- Improved progress bar to show actual test progress
+- Enhanced error handling and logging
+
+v1.0.3:
+- Professional CLI architecture with DI
+- Added Serilog logging
+- Improved command pattern implementation
+
+v1.0.2:
+- Fixed test execution with proper working directory
+- Better project file detection
+
+v1.0.1:
+- Initial CLI tool release
+- Support for console and JSON reports
+- Parallel test execution
+        </PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
@@ -25,19 +80,20 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Spectre.Console" Version="0.48.0" />
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="8.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
         <PackageReference Include="Serilog" Version="3.1.1" />
-        <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
-        <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
-        <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
+        <PackageReference Include="Spectre.Console" Version="0.48.0" />
         <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
         <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
         <PackageReference Include="Serilog.Enrichers.Process" Version="2.0.2" />
+        <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
+        <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
         <PackageReference Include="Serilog.Enrichers.Environment" Version="2.3.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="8.0.0" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -47,6 +103,11 @@
         <None Update="appsettings.*.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+        <None Include="..\..\icon.png" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>

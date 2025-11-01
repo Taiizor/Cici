@@ -4,20 +4,70 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <LangVersion>latest</LangVersion>
+        
+        <!-- Package Information -->
         <PackageId>Cici</PackageId>
         <Version>1.0.1</Version>
-        <AnalysisLevel>preview</AnalysisLevel>
-        <LangVersion>preview</LangVersion>
-        <Authors>Cici Team</Authors>
-        <Description>A flaky test detector for .NET projects</Description>
-        <PackageTags>testing;flaky;test;automation;ci;quality</PackageTags>
-        <LangVersion>latest</LangVersion>
+        <Authors>Taiizor</Authors>
+        <Company>Taiizor</Company>
+        <Copyright>Copyright © 2024 Taiizor</Copyright>
+        <Product>Cici - Flaky Test Detector</Product>
+        
+        <!-- Package Metadata -->
+        <Title>Cici - Flaky Test Detector</Title>
+        <Description>A powerful and intelligent flaky test detector for .NET projects. Helps identify unstable tests by running them multiple times and analyzing failure patterns. Features include parallel execution, detailed error categorization, and comprehensive reporting.</Description>
+        <Summary>Detect and analyze flaky tests in your .NET test suites</Summary>
+        <PackageTags>testing;flaky-tests;test-automation;ci-cd;quality-assurance;test-analysis;dotnet;xunit;nunit;mstest</PackageTags>
+        
+        <!-- Repository Information -->
+        <PackageProjectUrl>https://github.com/Taiizor/Cici</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Taiizor/Cici</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        
+        <!-- License -->
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        
+        <!-- Documentation -->
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageIcon>icon.png</PackageIcon>
+        
+        <!-- Build Options -->
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <Deterministic>true</Deterministic>
+        <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+        
+        <!-- Release Notes -->
+        <PackageReleaseNotes>
+v1.0.1:
+- Improved test execution with proper project file detection
+- Enhanced progress reporting
+- Better error categorization
+- Fixed vstest command syntax
+
+v1.0.0:
+- Initial release
+- Support for xUnit, NUnit, and MSTest
+- Parallel test execution
+- Console and JSON reporting
+        </PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="18.0.0" />
         <PackageReference Include="System.Text.Json" Version="9.0.10" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+    </ItemGroup>
+    
+    <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+        <None Include="..\..\icon.png" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>
