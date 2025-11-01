@@ -167,12 +167,12 @@ namespace Cici.Analyzer
         /// Gets or sets the maximum number of flaky tests to include in the summary report. Default is 10.
         /// </summary>
         public int TopFlakyTestsToReport { get; set; } = 10;
-        
+
         /// <summary>
         /// Gets or sets whether to analyze and categorize error patterns. Default is true.
         /// </summary>
         public bool AnalyzeErrorPatterns { get; set; } = true;
-        
+
         /// <summary>
         /// Gets or sets the threshold for considering a test flaky. Tests failing at least this percentage of the time are considered flaky. Default is 0.1 (10%).
         /// </summary>

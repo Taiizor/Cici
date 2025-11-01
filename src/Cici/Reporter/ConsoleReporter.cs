@@ -3,8 +3,17 @@ using Cici.Models;
 
 namespace Cici.Reporter
 {
+    /// <summary>
+    /// Generates flaky test reports in the console with colored, formatted output.
+    /// </summary>
     public class ConsoleReporter : IReporter
     {
+        /// <summary>
+        /// Generates a formatted console report from the test analysis results.
+        /// </summary>
+        /// <param name="results">Collection of analyzed test results.</param>
+        /// <param name="summary">Summary statistics from the analysis.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public async Task GenerateReportAsync(IEnumerable<FlakyTestResult> results, FlakyDetectionSummary summary)
         {
             await Task.Run(() =>

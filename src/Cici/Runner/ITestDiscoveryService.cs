@@ -13,7 +13,7 @@ namespace Cici.Runner
         /// <param name="assemblyPath">The path to the test assembly.</param>
         /// <returns>A task containing the collection of discovered tests.</returns>
         Task<IEnumerable<TestInfo>> DiscoverTestsAsync(string assemblyPath);
-        
+
         /// <summary>
         /// Discovers tests in the specified assembly with optional filtering.
         /// </summary>

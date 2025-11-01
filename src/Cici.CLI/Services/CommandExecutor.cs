@@ -4,8 +4,16 @@ using Microsoft.Extensions.Logging;
 
 namespace Cici.CLI.Services
 {
+    /// <summary>
+    /// Orchestrates command execution for the CLI application.
+    /// </summary>
     public class CommandExecutor(IServiceProvider serviceProvider, ILogger<CommandExecutor> logger, IConsoleService console)
     {
+        /// <summary>
+        /// Executes the appropriate command based on the provided arguments.
+        /// </summary>
+        /// <param name="args">Command line arguments.</param>
+        /// <returns>Exit code where 0 indicates success.</returns>
         public async Task<int> ExecuteAsync(string[] args)
         {
             try
