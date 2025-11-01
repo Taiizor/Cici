@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
@@ -9,7 +9,7 @@
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>cici</ToolCommandName>
         <PackageId>Cici.CLI</PackageId>
-        <Version>1.0.2</Version>
+        <Version>1.0.3</Version>
         <Authors>Cici Team</Authors>
         <Description>Flaky Test Detector for .NET - CLI Tool</Description>
         <PackageTags>testing;flaky;test;automation;ci;quality;cli</PackageTags>

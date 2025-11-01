@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
+using System.Text;
 
 namespace Cici.CLI;
 
@@ -13,6 +14,9 @@ public class Program
 {
     public static async Task<int> Main(string[] args)
     {
+        Console.InputEncoding = Encoding.UTF8;
+        Console.OutputEncoding = Encoding.UTF8;
+
         // Configure Serilog
         ConfigureLogging(args);
         
