@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        configuration: [Debug, Release]
+
+    steps:
+    - uses: actions/checkout@v3
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --configuration ${{ matrix.configuration }} --no-restore
+      
+    - name: Test
+      run: dotnet test --configuration ${{ matrix.configuration }} --no-build --verbosity normal --collect:"XPlat Code Coverage"
+      
+    - name: Run Cici on Sample Tests
+      if: matrix.configuration == 'Release' && matrix.os == 'ubuntu-latest'
+      run: |
+        dotnet run --project src/Cici.CLI/Cici.CLI.csproj -- run \
+          --assembly samples/SampleTests/bin/${{ matrix.configuration }}/net8.0/SampleTests.dll \
+          --repeat 5 \
+          --report json \
+          --output ./test-results
+          
+    - name: Upload Test Results
+      if: matrix.configuration == 'Release' && matrix.os == 'ubuntu-latest'
+      uses: actions/upload-artifact@v3
+      with:
+        name: flaky-test-results
+        path: ./test-results/
+        
+    - name: Upload Code Coverage
+      if: matrix.configuration == 'Release' && matrix.os == 'ubuntu-latest'
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./**/coverage.cobertura.xml
+        
+  pack:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v3
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Pack NuGet packages
+      run: |
+        dotnet pack src/Cici/Cici.csproj --configuration Release --output ./artifacts
+        dotnet pack src/Cici.CLI/Cici.CLI.csproj --configuration Release --output ./artifacts
+        
+    - name: Upload NuGet packages
+      uses: actions/upload-artifact@v3
+      with:
+        name: nuget-packages
+        path: ./artifacts/*.nupkg
