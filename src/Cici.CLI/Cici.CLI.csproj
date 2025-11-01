@@ -50,7 +50,7 @@
         <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
         
         <!-- Code Analysis -->
-        <NoWarn>$(NoWarn);CA1848;CA1305</NoWarn>
+        <NoWarn>$(NoWarn);CS1591;CA1848;CA1305</NoWarn>
         
         <!-- Release Notes -->
         <PackageReleaseNotes>
