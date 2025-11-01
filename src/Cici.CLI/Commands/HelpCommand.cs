@@ -4,23 +4,14 @@ using Spectre.Console;
 
 namespace Cici.CLI.Commands
 {
-    public class HelpCommand : ICommand
+    public class HelpCommand(ILogger<HelpCommand> logger, IConsoleService console) : ICommand
     {
-        private readonly ILogger<HelpCommand> _logger;
-        private readonly IConsoleService _console;
-
         public string Name => "help";
         public string Description => "Show help and usage information";
 
-        public HelpCommand(ILogger<HelpCommand> logger, IConsoleService console)
-        {
-            _logger = logger;
-            _console = console;
-        }
-
         public Task<int> ExecuteAsync(string[] args)
         {
-            _console.WriteHeader();
+            console.WriteHeader();
 
             AnsiConsole.MarkupLine("[bold cyan]Usage:[/] cici <command> [[options]]");
             AnsiConsole.WriteLine();
@@ -78,7 +69,7 @@ namespace Cici.CLI.Commands
 
             AnsiConsole.MarkupLine("[dim]For more information, visit: https://github.com/Taiizor/Cici[/]");
 
-            _logger.LogInformation("Help information displayed");
+            logger.LogInformation("Help information displayed");
 
             return Task.FromResult(0);
         }

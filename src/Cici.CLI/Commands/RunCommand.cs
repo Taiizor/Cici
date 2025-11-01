@@ -8,21 +8,10 @@ using Spectre.Console;
 
 namespace Cici.CLI.Commands
 {
-    public class RunCommand : ICommand
+    public class RunCommand(ILogger<RunCommand> logger, IConsoleService console, IFileSystemService fileSystem) : ICommand
     {
-        private readonly ILogger<RunCommand> _logger;
-        private readonly IConsoleService _console;
-        private readonly IFileSystemService _fileSystem;
-
         public string Name => "run";
         public string Description => "Run flaky test detection on a test assembly";
-
-        public RunCommand(ILogger<RunCommand> logger, IConsoleService console, IFileSystemService fileSystem)
-        {
-            _logger = logger;
-            _console = console;
-            _fileSystem = fileSystem;
-        }
 
         public async Task<int> ExecuteAsync(string[] args)
         {
@@ -30,20 +19,20 @@ namespace Cici.CLI.Commands
 
             if (options == null)
             {
-                _console.WriteError("Invalid arguments. Use --help for usage information.");
+                console.WriteError("Invalid arguments. Use --help for usage information.");
                 return 1;
             }
 
             // Validate assembly path
-            if (!_fileSystem.FileExists(options.AssemblyPath))
+            if (!fileSystem.FileExists(options.AssemblyPath))
             {
-                _console.WriteError($"Assembly not found: {options.AssemblyPath}");
+                console.WriteError($"Assembly not found: {options.AssemblyPath}");
                 return 1;
             }
 
             try
             {
-                _logger.LogInformation("Starting flaky test detection for {Assembly}", options.AssemblyPath);
+                logger.LogInformation("Starting flaky test detection for {Assembly}", options.AssemblyPath);
 
                 // Show progress
                 CiciRunResult result = await AnsiConsole.Progress()
@@ -62,19 +51,19 @@ namespace Cici.CLI.Commands
 
                 if (result.Success)
                 {
-                    _logger.LogInformation("Analysis completed successfully. Found {FlakyCount} flaky tests", result.FlakyTests);
+                    logger.LogInformation("Analysis completed successfully. Found {FlakyCount} flaky tests", result.FlakyTests);
                     return result.FlakyTests > 0 ? 2 : 0; // Return 2 if flaky tests found (warning)
                 }
                 else
                 {
-                    _console.WriteError($"Analysis failed: {result.ErrorMessage}");
+                    console.WriteError($"Analysis failed: {result.ErrorMessage}");
                     return 1;
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error during test analysis");
-                _console.WriteError($"Unexpected error: {ex.Message}");
+                logger.LogError(ex, "Unexpected error during test analysis");
+                console.WriteError($"Unexpected error: {ex.Message}");
                 return 1;
             }
         }
@@ -154,7 +143,7 @@ namespace Cici.CLI.Commands
             // Validate required options
             if (string.IsNullOrEmpty(options.AssemblyPath))
             {
-                _console.WriteError("Assembly path is required. Use -a or --assembly option.");
+                console.WriteError("Assembly path is required. Use -a or --assembly option.");
                 return null;
             }
 
@@ -223,18 +212,18 @@ namespace Cici.CLI.Commands
                         JsonReporter jsonReporter = new();
                         if (!string.IsNullOrEmpty(options.OutputDirectory))
                         {
-                            _fileSystem.EnsureDirectoryExists(options.OutputDirectory);
+                            fileSystem.EnsureDirectoryExists(options.OutputDirectory);
                             jsonReporter.OutputPath = Path.Combine(options.OutputDirectory, "flaky-report.json");
                         }
                         reporters.Add(jsonReporter);
                         break;
 
                     case "html":
-                        _console.WriteWarning("HTML reporter is not yet implemented.");
+                        console.WriteWarning("HTML reporter is not yet implemented.");
                         break;
 
                     default:
-                        _console.WriteWarning($"Unknown report format: {format}");
+                        console.WriteWarning($"Unknown report format: {format}");
                         break;
                 }
             }

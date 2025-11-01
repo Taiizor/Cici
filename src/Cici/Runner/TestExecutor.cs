@@ -4,14 +4,9 @@ using System.Text;
 
 namespace Cici.Runner
 {
-    public class TestExecutor : ITestExecutor
+    public class TestExecutor(TestExecutorOptions? options = null) : ITestExecutor
     {
-        private readonly TestExecutorOptions _options;
-
-        public TestExecutor(TestExecutorOptions? options = null)
-        {
-            _options = options ?? new TestExecutorOptions();
-        }
+        private readonly TestExecutorOptions _options = options ?? new TestExecutorOptions();
 
         public async Task<TestExecutionResult> ExecuteTestAsync(TestInfo test, int attemptNumber)
         {

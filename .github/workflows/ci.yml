@@ -35,7 +35,10 @@ jobs:
       run: dotnet build --configuration ${{ matrix.configuration }} --no-restore
       
     - name: Test
-      run: dotnet test --configuration ${{ matrix.configuration }} --no-build --verbosity normal --collect:"XPlat Code Coverage"
+      run: |
+        dotnet test --configuration ${{ matrix.configuration }} --no-build --verbosity normal \
+          --collect:"XPlat Code Coverage" \
+          --filter "FullyQualifiedName!~AlwaysFailingTests"
       
     - name: Run Cici on Sample Tests
       if: matrix.configuration == 'Release' && matrix.os == 'ubuntu-latest'
@@ -62,7 +65,7 @@ jobs:
   pack:
     needs: build
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
     
     steps:
     - uses: actions/checkout@v3

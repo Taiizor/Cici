@@ -3,14 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace Cici.Analyzer
 {
-    public class FlakyAnalyzer : IFlakyAnalyzer
+    public class FlakyAnalyzer(FlakyAnalyzerOptions? options = null) : IFlakyAnalyzer
     {
-        private readonly FlakyAnalyzerOptions _options;
-
-        public FlakyAnalyzer(FlakyAnalyzerOptions? options = null)
-        {
-            _options = options ?? new FlakyAnalyzerOptions();
-        }
+        private readonly FlakyAnalyzerOptions _options = options ?? new FlakyAnalyzerOptions();
 
         public FlakyTestResult AnalyzeTestResults(TestInfo test, List<TestExecutionResult> executionResults)
         {

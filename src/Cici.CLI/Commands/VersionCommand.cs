@@ -5,23 +5,14 @@ using System.Reflection;
 
 namespace Cici.CLI.Commands
 {
-    public class VersionCommand : ICommand
+    public class VersionCommand(ILogger<VersionCommand> logger, IConsoleService console) : ICommand
     {
-        private readonly ILogger<VersionCommand> _logger;
-        private readonly IConsoleService _console;
-
         public string Name => "version";
         public string Description => "Show version information";
 
-        public VersionCommand(ILogger<VersionCommand> logger, IConsoleService console)
-        {
-            _logger = logger;
-            _console = console;
-        }
-
         public Task<int> ExecuteAsync(string[] args)
         {
-            _console.WriteHeader();
+            console.WriteHeader();
 
             Assembly assembly = Assembly.GetExecutingAssembly();
             string version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
@@ -44,7 +35,7 @@ namespace Cici.CLI.Commands
             AnsiConsole.WriteLine();
             AnsiConsole.MarkupLine("[dim]For more information, visit: https://github.com/Taiizor/Cici[/]");
 
-            _logger.LogInformation("Version information displayed");
+            logger.LogInformation("Version information displayed");
 
             return Task.FromResult(0);
         }
